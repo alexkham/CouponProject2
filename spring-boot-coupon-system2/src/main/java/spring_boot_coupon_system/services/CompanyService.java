@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.Data;
 import lombok.Getter;
 import spring_boot_coupon_system.entities.Company;
+import spring_boot_coupon_system.exceptions.CouponSystemException;
 import spring_boot_coupon_system.repositories.CompanyRepository;
 
 @Service
@@ -17,10 +18,21 @@ import spring_boot_coupon_system.repositories.CompanyRepository;
 public class CompanyService extends GeneralService {
 	
 	
-	public boolean isCompanyExists(String email,String password) {
+	public boolean isCompanyExists(Long clientId, String email,String password) throws CouponSystemException {
+		//Case there is wrong client id provided
+		Company company=companyRepository.findById(clientId).
+				orElseThrow(()->new CouponSystemException
+						("Unauthorized access attemt :There is no client with such an Id! "));
+		//else
+		String clientEmail=company.getEmail().trim();
+		String clientPassword=company.getPassword().trim();
+		if(!(clientEmail.equalsIgnoreCase(email.trim())&&clientPassword.equalsIgnoreCase(password))) {
+			
+			throw new CouponSystemException("Unauthorized access attemt:Data provided do not match!");
+		}
 		
 		
-		return companyRepository.findByEmailAndPassword(email, password);
+		return company.equals(companyRepository.findByEmailAndPassword(email, password));
 		
 		
 	}

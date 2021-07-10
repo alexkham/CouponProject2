@@ -23,14 +23,14 @@ public class CompanyService extends GeneralService {
 		//Case there is wrong client id provided
 		Company company=companyRepository.findById(clientId).
 				orElseThrow(()->new CouponSystemException
-						("Unauthorized access attemt :There is no client with such an Id! "));
+						("Unauthorized access attempt :There is no client with such an Id! "));
 		//else
 		//Comparing actual data with arguments
 		String clientEmail=company.getEmail().trim();
 		String clientPassword=company.getPassword().trim();
 		if(!(clientEmail.equalsIgnoreCase(email.trim())&&clientPassword.equalsIgnoreCase(password))) {
 
-			throw new CouponSystemException("Unauthorized access attemt:Data provided do not match!");
+			throw new CouponSystemException("Unauthorized access attempt:Data provided do not match!");
 		}
 
 		//Might be redundant :may just return true
@@ -77,20 +77,78 @@ public class CompanyService extends GeneralService {
 
 	}
 
-	public void updateCoupon(Long clientId,Coupon coupon) {
+	public void updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
+		
+		Long couponId=coupon.getId();
+		Long companyId=coupon.getCompanyId();
+		String title=coupon.getTitle();
+		Coupon otherCoupon=null;
+		//Checking if company exists
+		if(!companyRepository.existsById(clientId)) 
+		     throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+		
+		//Checking if the coupon belongs to the company 
+		else if(companyId!=null&&companyId!=clientId) 
+			
+			 throw new CouponSystemException
+			 ("The coupon provided does not belong to the current company.Can not proceed");
+			
+		else {
+			//Can use clientId either ,but since it already has passed the validation they should be equal 
+			otherCoupon=couponRepository.findByCompanyIdAndTitle(companyId, title);
+			
+			if(otherCoupon!=null&&otherCoupon.getId()!=couponId) 
+				
+				throw new CouponSystemException("Coupon with such title already exists.Title shoud be unique");
+			
+		}
+		
+		couponRepository.save(coupon);
 
+		
+	}
+	
+    @Transactional
+	public void deleteCoupon(Long clientId, long couponId) throws CouponSystemException {
+		
+		
+		Coupon coupon=couponRepository.findById( couponId).
+				orElseThrow(()->new CouponSystemException("Wrong data provided:coupon with such Id does not exist"));
+		Long companyId=coupon.getCompanyId();
+		boolean active=coupon.getIsActive();
+		
+		//Checking if company exists
+		if(!companyRepository.existsById(clientId)) 
+		   throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+		
+		else if(companyId!=null&&companyId!=clientId) 
+			
+			 throw new CouponSystemException
+			 ("The coupon provided does not belong to the current company.Can not proceed");
+		else if(!active)
+				throw new CouponSystemException("Coupon specified is not active already");
+		
+			else {
+				coupon.setIsActive(false);
+				couponRepository.save(coupon);
+					
+		}
+		
 	}
 
-	public void deleteCoupon(int couponId) {
-
-	}
-
-	public List<Company> getAllCoupons(){
+	public List<Coupon> getCompanyCoupons(Long clientId) throws CouponSystemException{
+		
+		//Checking if company exists
+		if(!companyRepository.existsById(clientId)) 
+		   throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+		
 		return null;
 
 	}
 
-	public Company getOneCoupon(int couponId) {
+	public Coupon getOneCoupon(Long clientId, int couponId) {
+		
+		
 		return null;
 
 	}

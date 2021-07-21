@@ -5,17 +5,24 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import lombok.Data;
 import spring_boot_coupon_system.entities.Coupon;
+import spring_boot_coupon_system.repositories.CouponRepository;
 
-@Service
+@Component
 @Transactional
-public class DailyJob extends GeneralService {
+public class DailyJob  {
+	
+	
+	@Autowired
+	private CouponRepository couponRepository;
 	
 	
 	private final long PERIOD=86_400_000;

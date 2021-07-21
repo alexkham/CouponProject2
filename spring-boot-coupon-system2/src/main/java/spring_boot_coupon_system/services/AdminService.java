@@ -16,10 +16,16 @@ import spring_boot_coupon_system.exceptions.CouponSystemException;
 @Service
 public class AdminService extends ClientService {
 
+	private static final String ADMIN_PASSWORD = "admin";
+	private static final String ADMIN_EMAIL = "admin@admin.com";
+	
+
 	@Override
 	public boolean login(String email, String password) {
-		return false;
+		return email.equalsIgnoreCase(ADMIN_EMAIL)&&password.equals(ADMIN_PASSWORD);
 	}
+	
+	
 	
 	public void addCompany(Company company) throws CouponSystemException {
 		
@@ -37,7 +43,7 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void deleteCompany(int companyId) {
+	public void deleteCompany(Long companyId) {
 		
 	}
 	
@@ -67,7 +73,7 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void deleteCustomer(int customerId) {
+	public void deleteCustomer(Long customerId) {
 		
 	}
 	

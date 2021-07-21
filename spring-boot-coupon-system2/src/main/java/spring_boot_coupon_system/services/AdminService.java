@@ -1,6 +1,7 @@
 package spring_boot_coupon_system.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,15 @@ public class AdminService extends ClientService {
 		return false;
 	}
 	
-	public int addCompany(Company company) {
-		return 0;
+	public void addCompany(Company company) throws CouponSystemException {
+		
+		if(companyRepository.existsByName(company.getName()))
+			throw new CouponSystemException(ErrorMessages.COMPANY_NAME_EXISTS);
+		if (companyRepository.existsByEmail(company.getEmail()))
+			throw new CouponSystemException(ErrorMessages.COMPANY_EMAIL_EXISTS);
+		
+		
+		companyRepository.save(company);
 		
 	}
 	
@@ -33,8 +41,9 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public ArrayList<Company> getAllCompanies(){
-		return null;
+	public List<Company> getAllCompanies(){
+		
+		return companyRepository.findAll();
 		
 	}
 	
@@ -62,8 +71,9 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public ArrayList<Customer> getAllCustomers(){
-		return null;
+	public List<Customer> getAllCustomers(){
+		
+		return customerRepository.findAll();
 		
 	}
 	

@@ -188,14 +188,11 @@ public class CompanyService extends ClientService {
        
        public Company getCompanyDetails(Long clientId) throws CouponSystemException {
 		//Checks the argument validity and creates new object in one piece of action
-   		Company company = companyRepository
+   		return companyRepository
    				.findById(clientId)
    				.orElseThrow(()->new CouponSystemException
-   						("Unathorized access attempt:company with such an id does not exist"));
+   						(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
    		
-		
-		return company;
-
 	}
 
 	

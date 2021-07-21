@@ -8,22 +8,30 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import lombok.Data;
 import lombok.Getter;
+import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
+import spring_boot_coupon_system.exceptions.ErrorMessages;
 import spring_boot_coupon_system.repositories.CompanyRepository;
 
 @Service
-public class CompanyService extends GeneralService {
+public class CompanyService extends ClientService {
+	
+	@Override
+	public boolean login(String email, String password) {
+		return false;
+	}
 
 
 	public boolean isCompanyExists(Long clientId, String email,String password) throws CouponSystemException {
 		//Case there is wrong client id provided
 		Company company=companyRepository.findById(clientId).
 				orElseThrow(()->new CouponSystemException
-						("Unauthorized access attempt :There is no client with such an Id! "));
+						(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST));
 		//else
 		//Comparing actual data with arguments
 		String clientEmail=company.getEmail().trim();
@@ -48,7 +56,7 @@ public class CompanyService extends GeneralService {
 			throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
 		
 
-		else if(coupon.getCompanyId()!=null&& coupon.getCompanyId()!=clientId) 
+		else if(coupon.getCompany()!=null&& coupon.getCompany().getCompanyId()!=clientId) 
 
 			throw new CouponSystemException
 			("You are not allowed to perform that action:the coupon you are trying to add belongs to another company");
@@ -80,7 +88,7 @@ public class CompanyService extends GeneralService {
 	public void updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 		
 		Long couponId=coupon.getId();
-		Long companyId=coupon.getCompanyId();
+		Long companyId=coupon.getCompany().getCompanyId();
 		String title=coupon.getTitle();
 		Coupon otherCoupon=null;
 		//Checking if company exists
@@ -114,7 +122,7 @@ public class CompanyService extends GeneralService {
 		
 		Coupon coupon=couponRepository.findById( couponId).
 				orElseThrow(()->new CouponSystemException("Wrong data provided:coupon with such Id does not exist"));
-		Long companyId=coupon.getCompanyId();
+		Long companyId=coupon.getCompany().getCompanyId();
 		boolean active=coupon.getIsActive();
 		
 		//Checking if company exists
@@ -142,15 +150,54 @@ public class CompanyService extends GeneralService {
 		if(!companyRepository.existsById(clientId)) 
 		   throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
 		
+		List<Coupon> companyCoupons=couponRepository.findByCompanyId(clientId);
+		
+		return companyCoupons;
+
+	}
+	
+       public List<Coupon> getCompanyCouponsByCategory(Long clientId,Category category) throws CouponSystemException{
+		
+		//Checking if company exists
+		if(!companyRepository.existsById(clientId)) 
+		   throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+		
+		Long categoryId=category.getId();
+		
+		List<Coupon> companyCouponsByCategory=couponRepository.findByCompanyIdAndCategoryId(clientId,categoryId);
+		
+		return companyCouponsByCategory;
+
+	}
+       
+       public List<Coupon> getCompanyCouponsByMaxPrice(Long clientId,double maxPrice) throws CouponSystemException{
+    	 
+    	 //Checking if company exists
+   		if(!companyRepository.existsById(clientId)) 
+   		   throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+    	   
+    	   
+    	   
+    	   
 		return null;
+    	   
+    	   
+       }
+
+	
+       
+       public Company getCompanyDetails(Long clientId) throws CouponSystemException {
+		//Checks the argument validity and creates new object in one piece of action
+   		Company company = companyRepository
+   				.findById(clientId)
+   				.orElseThrow(()->new CouponSystemException
+   						("Unathorized access attempt:company with such an id does not exist"));
+   		
+		
+		return company;
 
 	}
 
-	public Coupon getOneCoupon(Long clientId, int couponId) {
-		
-		
-		return null;
-
-	}
+	
 
 }

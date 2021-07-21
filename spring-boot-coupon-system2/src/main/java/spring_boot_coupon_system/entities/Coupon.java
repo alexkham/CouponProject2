@@ -6,28 +6,37 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
+@Table(name = "Coupons")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Coupon {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long companyId;
-	private Long categoryId;
+	@ManyToOne()
+	@ToString.Exclude
+	private Company company;
+	@ManyToOne
+	private Category category;
 	private String title;
 	private String description;
 	private Date startDate;
 	private Date endDate;
-	private Integer quantity;
-	private Double unitPrice;
+	private int quantity;
+	private double unitPrice;
 	private String imageUrl;
 	private Boolean isActive;
 	

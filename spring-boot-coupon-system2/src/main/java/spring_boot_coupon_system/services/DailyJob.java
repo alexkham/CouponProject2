@@ -3,6 +3,8 @@ package spring_boot_coupon_system.services;
 import java.sql.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,6 +14,7 @@ import lombok.Data;
 import spring_boot_coupon_system.entities.Coupon;
 
 @Service
+@Transactional
 public class DailyJob extends GeneralService {
 	
 	
@@ -26,8 +29,11 @@ public class DailyJob extends GeneralService {
 		
 		for(Coupon coupon:expiredCoupons) {
 			
-			couponRepository.delete(coupon);
+			coupon.setIsActive(false);
+						
 		}
+		
+		couponRepository.saveAll(expiredCoupons);
 			
 	}
 	

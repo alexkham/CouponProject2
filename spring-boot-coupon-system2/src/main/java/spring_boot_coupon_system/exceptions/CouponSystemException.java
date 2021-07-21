@@ -15,6 +15,10 @@ public class CouponSystemException extends Exception {
 		super(message, cause);
 	}
 
+	public CouponSystemException(ErrorMessages errorMessage) {
+		super(errorMessage.getMessage());
+	}
+	
 	public CouponSystemException(String message) {
 		super(message);
 	}

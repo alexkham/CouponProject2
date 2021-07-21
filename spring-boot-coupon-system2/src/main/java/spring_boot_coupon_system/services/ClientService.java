@@ -8,7 +8,7 @@ import spring_boot_coupon_system.repositories.CouponRepository;
 import spring_boot_coupon_system.repositories.CustomerRepository;
 
 @Service
-public class GeneralService {
+public abstract class ClientService {
 	
 	@Autowired
 	protected CouponRepository couponRepository;
@@ -16,6 +16,8 @@ public class GeneralService {
 	protected CompanyRepository companyRepository;
 	@Autowired
 	protected CustomerRepository customerRepository;
+	
+	public abstract boolean login(String email,String password);
 	
 
 

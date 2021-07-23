@@ -14,7 +14,10 @@ public enum ErrorMessages {
 	COMPANY_ID_DOES_NOT_EXIST("Company with such an id does not exist"),
 	COMPANY_IS_INACTIVE("This company is inactive already"),
 	CUSTOMER_IS_INACTIVE("This customer is inactive already"),
-	CUSTOMER_EMAIL_EXISTS("Customer with such an email exists already.Cannot add ");
+	CUSTOMER_EMAIL_EXISTS("Customer with such an email exists already.Cannot add "),
+	COUPON_IS_INACTIVE("Coupon specified is inactive already"),
+	COUPON_DOES_NOT_EXIST("Coupon specified does not exist"), 
+	COUPON_TITLE_EXISTS("Coupon with such a title exists already. Title has to be unique");
 	
 	private String message;
 

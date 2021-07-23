@@ -3,6 +3,7 @@ package spring_boot_coupon_system.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import spring_boot_coupon_system.exceptions.CouponSystemException;
 import spring_boot_coupon_system.repositories.CategoryRepository;
 import spring_boot_coupon_system.repositories.CompanyRepository;
 import spring_boot_coupon_system.repositories.CouponRepository;
@@ -24,7 +25,7 @@ public abstract class ClientService {
 	@Autowired
 	private PurchaseRepository purchaseRepository;
 	
-	public abstract boolean login(String email,String password);
+	
 	
 
 

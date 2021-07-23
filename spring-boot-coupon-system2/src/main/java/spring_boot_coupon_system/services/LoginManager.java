@@ -18,7 +18,7 @@ public class LoginManager {
 	
 	
 	
-	public ClientService login(String email, String password, UserType userType) throws CouponSystemException {
+	public ClientService login(Long clientId ,String email, String password, UserType userType) throws CouponSystemException {
 		
 		ClientService clientService=null;
 		
@@ -34,13 +34,13 @@ public class LoginManager {
 			break;
 			
          case COMPANY:
-        	 if(companyService.login(email, password))
+        	 if(companyService.login(clientId,email, password))
         		 clientService=companyService;
 			
 			break;
 			
          case CUSTOMER:
-        	 if(customerService.login(email, password))
+        	 if(customerService.login(clientId,email, password))
         		 clientService=customerService;
  			
  			break;	

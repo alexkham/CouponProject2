@@ -30,6 +30,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
 	List<Coupon> findByCustomerIdAndUnitPriceLessThan(Long clientId, double maxPrice);
 	
+	List<Coupon> findByCompanyIdAndUnitPriceLessThan(Long clientId, double maxPrice);
+	
 	
 	
 	

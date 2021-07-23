@@ -24,7 +24,6 @@ public class AdminService extends ClientService {
 	private static final String ADMIN_EMAIL = "admin@admin.com";
 	
 
-	@Override
 	public boolean login(String email, String password) {
 		return email.equalsIgnoreCase(ADMIN_EMAIL)
 				&&password.equals(ADMIN_PASSWORD);
@@ -68,8 +67,13 @@ public class AdminService extends ClientService {
 		companyRepository.save(company);
 		
 	}
+	
+	
 	//TODO
 	public List<Company> getAllCompanies(){
+		
+		
+		//return companyRepository.findByActiveTrue();
 		
 		return companyRepository.findAll().stream().filter(c->c.getIsActive()).collect(Collectors.toList());
 		
@@ -92,7 +96,9 @@ public class AdminService extends ClientService {
 	
 	public void addCustomer(Customer customer) throws CouponSystemException {
 		
-		if(customerRepository.existsByEmail(customer.getEmail()))
+		Customer customerByEmail=customerRepository.findByEmail(customer.getEmail());
+		
+		if(customerByEmail!=null&&customerByEmail.getIsActive())
 			throw new CouponSystemException(ErrorMessages.CUSTOMER_EMAIL_EXISTS);
 		
 		customerRepository.save(customer);

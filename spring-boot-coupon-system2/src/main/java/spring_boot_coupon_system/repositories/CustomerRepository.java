@@ -12,6 +12,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	
 	List<Customer> findByActiveTrue();
 	
-	boolean existsByEmail(String email);
+	Customer findByEmail(String email);
+	
 
 }

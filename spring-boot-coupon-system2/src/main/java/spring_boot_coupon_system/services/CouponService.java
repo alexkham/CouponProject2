@@ -14,10 +14,6 @@ public class CouponService extends ClientService {
 		
 	}
 
-	@Override
-	public boolean login(String email, String password) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 }

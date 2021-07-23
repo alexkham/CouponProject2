@@ -11,7 +11,10 @@ public enum ErrorMessages {
 	COMPANY_EMAIL_EXISTS("Company with such an email exists already.Company email has to be unique"),
 	CLIENT_ID_DOES_NOT_EXIST("Unauthorized access attempt :There is no client with such an Id! "),
 	CUSTOMER_ID_DOES_NOT_EXIST("Customer with such an id does not exist"),
-	COMPANY_ID_DOES_NOT_EXIST("Company with such an id does not exist");
+	COMPANY_ID_DOES_NOT_EXIST("Company with such an id does not exist"),
+	COMPANY_IS_INACTIVE("This company is inactive already"),
+	CUSTOMER_IS_INACTIVE("This customer is inactive already"),
+	CUSTOMER_EMAIL_EXISTS("Customer with such an email exists already.Cannot add ");
 	
 	private String message;
 

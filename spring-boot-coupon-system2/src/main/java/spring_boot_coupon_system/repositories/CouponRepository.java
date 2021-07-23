@@ -14,6 +14,8 @@ import spring_boot_coupon_system.entities.Coupon;
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	
+	List<Coupon> findByActiveTrue();
+	
 	List<Coupon> findByEndDateBefore(Date date);
 	
 	List<Coupon> findByCompanyId(Long companyId);

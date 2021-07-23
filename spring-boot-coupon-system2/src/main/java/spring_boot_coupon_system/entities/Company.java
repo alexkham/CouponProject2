@@ -35,7 +35,7 @@ public class Company {
 	private String email;
 	private String password;
 	private Boolean isActive;
-	@OneToMany(cascade = CascadeType.PERSIST,mappedBy = "Companies")
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "Companies")
 	@Singular
 	@ToString.Exclude
 	private List<Coupon> companyCoupons=new ArrayList<>();

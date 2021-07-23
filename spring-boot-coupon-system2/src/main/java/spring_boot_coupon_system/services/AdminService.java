@@ -2,6 +2,10 @@ package spring_boot_coupon_system.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,16 +26,20 @@ public class AdminService extends ClientService {
 
 	@Override
 	public boolean login(String email, String password) {
-		return email.equalsIgnoreCase(ADMIN_EMAIL)&&password.equals(ADMIN_PASSWORD);
+		return email.equalsIgnoreCase(ADMIN_EMAIL)
+				&&password.equals(ADMIN_PASSWORD);
 	}
 	
 	
 	
 	public void addCompany(Company company) throws CouponSystemException {
 		
-		if(companyRepository.existsByName(company.getName()))
+		Company companyByName=companyRepository.findByName(company.getName());
+		Company companyByEmail=companyRepository.findByEmail(company.getEmail());
+		
+		if(companyByName!=null&&companyByName.getIsActive())
 			throw new CouponSystemException(ErrorMessages.COMPANY_NAME_EXISTS);
-		if (companyRepository.existsByEmail(company.getEmail()))
+		if (companyByEmail!=null&&companyByEmail.getIsActive())
 			throw new CouponSystemException(ErrorMessages.COMPANY_EMAIL_EXISTS);
 		
 		
@@ -43,29 +51,53 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void deleteCompany(Long companyId) {
+	
+	@Transactional
+	public void deleteCompany(Long companyId) throws CouponSystemException {
+		//Checks the argument validity and creates new object in one piece of action
+   		 Company company=companyRepository
+   				.findById(companyId)
+   				.orElseThrow(()->new CouponSystemException(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
+   		 
+   		if(!company.getIsActive())
+   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+   		
+   		 
+   		company.setIsActive(false);
+   		 
+		companyRepository.save(company);
 		
 	}
-	
+	//TODO
 	public List<Company> getAllCompanies(){
 		
-		return companyRepository.findAll();
+		return companyRepository.findAll().stream().filter(c->c.getIsActive()).collect(Collectors.toList());
 		
 	}
 	
 	public Company getOneCompany(Long companyId) throws CouponSystemException {
 		//Checks the argument validity and creates new object in one piece of action
-   		return companyRepository
+   		Company company= companyRepository
    				.findById(companyId)
    				.orElseThrow(()->new CouponSystemException
    						(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
+   		if(!company.getIsActive())
+   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+   		
+		return company;
    		
 		
 				
 	}
 	
-	public int addCustomer(Customer customer) {
-		return 0; 
+	public void addCustomer(Customer customer) throws CouponSystemException {
+		
+		if(customerRepository.existsByEmail(customer.getEmail()))
+			throw new CouponSystemException(ErrorMessages.CUSTOMER_EMAIL_EXISTS);
+		
+		customerRepository.save(customer);
+		
+		
 		
 	}
 	
@@ -73,23 +105,42 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void deleteCustomer(Long customerId) {
+	@Transactional
+	public void deleteCustomer(Long customerId) throws CouponSystemException {
+		//Both validating and delivering data
+		 Customer customer=customerRepository
+				.findById(customerId)
+				.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
+		 
+		 
+		 if(!customer.getIsActive())
+				throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+		 
+		 
+		 customer.setIsActive(false);
+		 
+		 customerRepository.save(customer);
 		
 	}
 	
+	
 	public List<Customer> getAllCustomers(){
 		
-		return customerRepository.findAll();
+		return customerRepository.findByActiveTrue();
 		
 	}
 	
 	public Customer getOneCustomer(Long customerId) throws CouponSystemException {
 		
 		//Both validating and delivering data
-				return customerRepository
+		Customer customer= customerRepository
 						.findById(customerId)
-						.orElseThrow(()->new CouponSystemException
-							(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
+						.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
+		
+		if(!customer.getIsActive())
+			throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+		
+		return customer;
 				
 				
 		

@@ -10,13 +10,13 @@ import spring_boot_coupon_system.entities.Company;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long>{
 	
-	
+	List<Company> findByActiveTrue();
 	
 	List<Company> findByEmailAndPassword(String email,String password);
 	
-	boolean existsByEmail(String email);
+	Company findByEmail(String email);
 	
-	boolean existsByName(String name);
+	Company  findByName(String name);
 	
 	boolean existsByEmailAndPassword(String email,String password);
 

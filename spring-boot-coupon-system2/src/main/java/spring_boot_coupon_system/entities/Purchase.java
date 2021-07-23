@@ -2,6 +2,7 @@ package spring_boot_coupon_system.entities;
 
 import java.sql.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +33,7 @@ public class Purchase {
 	@ManyToOne
 	private Customer customer;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Coupon coupon;
 	
 	private Date purchaseDate;

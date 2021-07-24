@@ -17,7 +17,12 @@ public enum ErrorMessages {
 	CUSTOMER_EMAIL_EXISTS("Customer with such an email exists already.Cannot add "),
 	COUPON_IS_INACTIVE("Coupon specified is inactive already"),
 	COUPON_DOES_NOT_EXIST("Coupon specified does not exist"), 
-	COUPON_TITLE_EXISTS("Coupon with such a title exists already. Title has to be unique");
+	COUPON_TITLE_EXISTS("Coupon with such a title exists already. Title has to be unique"),
+	CAN_NOT_UPDATE_COMPANY_NAME("Company name isn't changable ,can not update"), 
+	COUPON_PURCHASED_BY_CUSTOMER("This coupon has been already purchased by customer."+
+	 "Can not purchase same coupon more than once"), 
+	COUPON_IS_NOT_IN_STOCK("This coupon currently isn't in stock and can not be purchased "), 
+	COUPON_EXPIRED("This coupon expired and can not be purchased");
 	
 	private String message;
 

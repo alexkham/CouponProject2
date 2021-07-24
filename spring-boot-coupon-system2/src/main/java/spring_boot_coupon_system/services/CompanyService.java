@@ -113,7 +113,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		else if(companyId!=null&&companyId!=clientId) 
 			
 			 throw new CouponSystemException
-			 ("The coupon provided does not belong to the current company.Can not proceed");
+			 (ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
 			
 		else {
 			//Can use clientId either ,but since it already has passed the validation they should be equal 

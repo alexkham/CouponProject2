@@ -23,7 +23,7 @@ public abstract class ClientService {
 	protected CategoryRepository categoryRepository;
 	
 	@Autowired
-	private PurchaseRepository purchaseRepository;
+	protected PurchaseRepository purchaseRepository;
 	
 	
 	

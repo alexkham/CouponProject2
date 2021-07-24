@@ -46,7 +46,22 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void updateCompany(Company company) { 
+	public void updateCompany(Company company) throws CouponSystemException {
+		
+		Long companyId=company.getCompanyId();
+		
+		Company companyToUpdate= companyRepository
+   				.findById(companyId)
+   				.orElseThrow(()->new CouponSystemException
+   						(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
+   		if(!company.getIsActive())
+   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+   		
+   		if(!company.getName().equals(companyToUpdate.getName()))
+   			throw new CouponSystemException(ErrorMessages.CAN_NOT_UPDATE_COMPANY_NAME);
+   		
+   		companyRepository.save(company);
+		
 		
 	}
 	
@@ -107,7 +122,18 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	public void updateCustomer(Customer customer) {
+	public void updateCustomer(Customer customer) throws CouponSystemException {
+		
+		Long customerId=customer.getId();
+		
+		 Customer customerToUpdate=customerRepository
+					.findById(customerId)
+					.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
+					 
+		if(!customer.getIsActive())
+					throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+		
+		customerRepository.save(customer);
 		
 	}
 	

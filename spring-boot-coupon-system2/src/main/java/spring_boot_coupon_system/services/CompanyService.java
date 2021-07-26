@@ -26,11 +26,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		//Case there is wrong client id provided
 		
-		Company company=companyRepository.findById(clientId)
-					.orElseThrow(()->new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST));
-		
-		if(!company.getIsActive())
-   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+		Company company = getCompanyDetails(clientId);
 		
 		String companyEmail=company.getEmail().toLowerCase().trim();
 		String companyPassword=company.getPassword();
@@ -41,12 +37,12 @@ public class CompanyService extends ClientService implements ClientLoginService 
 	}
 
 
+	
+
+
 	public boolean isCompanyExists(Long clientId, String email,String password) throws CouponSystemException {
 		//Case there is wrong client id provided
-		Company company=companyRepository.findById(clientId).
-				orElseThrow(()->new CouponSystemException
-						(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST));
-		//else
+		Company company=getCompanyDetails(clientId);
 		//Comparing actual data with arguments
 		String clientEmail=company.getEmail().trim();
 		String clientPassword=company.getPassword().trim();
@@ -63,35 +59,36 @@ public class CompanyService extends ClientService implements ClientLoginService 
 
 	@Transactional
 	public long addCoupon(Long clientId ,Coupon coupon) throws CouponSystemException {
-		Optional<Coupon> optionalCoupon=couponRepository.findById(coupon.getId());
-		String couponTitle=coupon.getTitle();
-		//Checking if company exists
-		if(!companyRepository.existsById(clientId)) 
-			throw new CouponSystemException("Unathorized access attempt:the credentials provided aren't valid");
+		
+		
+		//Checking if company exists and active
+		validateCompany(clientId);
 		
 
-		else if(coupon.getCompany()!=null&& coupon.getCompany().getCompanyId()!=clientId) 
+		if(coupon.getCompany()!=null&& coupon.getCompany().getCompanyId()!=clientId) 
 
 			throw new CouponSystemException
-			("You are not allowed to perform that action:the coupon you are trying to add belongs to another company");
+			(ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
+		
+		Optional<Coupon> optionalCoupon=couponRepository.findById(coupon.getId());
+		String couponTitle=coupon.getTitle();
+		
 
 		
 		//Checking if such coupon already exists
 		//Cover the case argument coupon's id is null
 
 
-		else if(optionalCoupon.get()!=null) 
-			throw new CouponSystemException("Cannot perform action: Such coupon already exists in the database!");
+		 if(optionalCoupon.get()!=null) 
+			throw new CouponSystemException(ErrorMessages.COUPON_TITLE_EXISTS);
 		
 		
 		else if(couponTitle!=null&&couponRepository.findByCompanyIdAndTitle(clientId, couponTitle) != null) 
 			
 			throw new CouponSystemException
-			("Cannot perform action:Coupon with such a title already exists in the database!");
+			(ErrorMessages.COUPON_TITLE_EXISTS);
 
 		
-
-
 		Coupon addedCoupon=couponRepository.save(coupon);
 
 
@@ -101,19 +98,21 @@ public class CompanyService extends ClientService implements ClientLoginService 
 
 	public void updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 		
+		
+		//Checking if company exists
+		validateCompany(clientId);
+		
 		Long couponId=coupon.getId();
 		Long companyId=coupon.getCompany().getCompanyId();
 		String title=coupon.getTitle();
 		Coupon otherCoupon=null;
-		//Checking if company exists
-		if(!companyRepository.existsById(clientId)) 
-		     throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+		
 		
 		//Checking if the coupon belongs to the company 
-		else if(companyId!=null&&companyId!=clientId) 
+		if(companyId!=null&&companyId!=clientId) 
 			
 			 throw new CouponSystemException
-			 (ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+			 (ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
 			
 		else {
 			//Can use clientId either ,but since it already has passed the validation they should be equal 
@@ -136,17 +135,21 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		Coupon coupon=couponRepository.findById( couponId).
 				orElseThrow(()->new CouponSystemException(ErrorMessages.COUPON_DOES_NOT_EXIST));
+		
+		if(!coupon.getIsActive())
+			throw new CouponSystemException(ErrorMessages.COUPON_IS_INACTIVE);
+		
 		Long companyId=coupon.getCompany().getCompanyId();
 		boolean active=coupon.getIsActive();
 		
 		//Checking if company exists
-		if(!companyRepository.existsById(clientId)) 
-		   throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+		validateCompany(clientId);
 		
-		else if(companyId!=null&&companyId!=clientId) 
+	    if(companyId!=null&&companyId!=clientId) 
 			
 			 throw new CouponSystemException
-			 ("The coupon provided does not belong to the current company.Can not proceed");
+			 (ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
+	    
 		else if(!active)
 				throw new CouponSystemException(ErrorMessages.COUPON_IS_INACTIVE);
 		
@@ -160,9 +163,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 
 	public List<Coupon> getCompanyCoupons(Long clientId) throws CouponSystemException{
 		
-		//Checking if company exists
-		if(!companyRepository.existsById(clientId)) 
-		   throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+		validateCompany(clientId);
 		
 		List<Coupon> companyCoupons=couponRepository.findByCompanyId(clientId);
 		
@@ -172,9 +173,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 	
        public List<Coupon> getCompanyCouponsByCategory(Long clientId,Category category) throws CouponSystemException{
 		
-		//Checking if company exists
-		if(!companyRepository.existsById(clientId)) 
-		   throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+		validateCompany(clientId);
 		
 		Long categoryId=category.getId();
 		
@@ -186,9 +185,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
        
        public List<Coupon> getCompanyCouponsByMaxPrice(Long clientId,double maxPrice) throws CouponSystemException{
     	 
-    	 //Checking if company exists
-   		if(!companyRepository.existsById(clientId)) 
-   		   throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+    	validateCompany(clientId);
    		
    		    	   
 		return couponRepository.findByCompanyIdAndUnitPriceLessThan(clientId, maxPrice);
@@ -200,16 +197,29 @@ public class CompanyService extends ClientService implements ClientLoginService 
        
        public Company getCompanyDetails(Long clientId) throws CouponSystemException {
     	
-		//Checks the argument validity and creates new object in one piece of action
-   		Company company= companyRepository
-   				.findById(clientId)
-   				.orElseThrow(()->new CouponSystemException(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
-   		if(!company.getIsActive())
-   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
-   		
-   		return company;
+    	   Company company=companyRepository.findById(clientId)
+  					.orElseThrow(()->new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST));
+  		
+  		if(!company.getIsActive())
+     			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+  		
+  		
+  		return company;
    		
 	}
+       
+       private void validateCompany(Long clientId) throws CouponSystemException {
+    	   
+    	   
+   		if(!companyRepository.existsById(clientId))
+   					throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+   		
+   		if(!companyRepository.getById(clientId).getIsActive())
+      			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+   		
+   		
+   		
+   	}  
 
 	
 

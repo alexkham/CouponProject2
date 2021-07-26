@@ -36,6 +36,8 @@ public class Purchase {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Coupon coupon;
 	
+	private boolean isActive;
+	
 	private Date purchaseDate;
 	
 	

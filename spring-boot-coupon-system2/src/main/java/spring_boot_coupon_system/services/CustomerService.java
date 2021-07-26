@@ -30,7 +30,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 	public boolean login(Long clientId, String email, String password) throws CouponSystemException {
 
 		//Both client validation and check for entity
-		Customer customer=validateCustomer(clientId);
+		Customer customer=getCustomerDetails(clientId);
 
 		String customerEmail=customer.getEmail().toLowerCase().trim();
 		String customerPassword=customer.getPassword();
@@ -45,7 +45,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public  Long  purchaseCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 
-		Customer customer= validateCustomer(clientId);
+		Customer customer= getCustomerDetails(clientId);
 		
 		Coupon actualCoupon=couponRepository.findById(coupon.getId())
 				.orElseThrow(()->new CouponSystemException(ErrorMessages.COUPON_DOES_NOT_EXIST));
@@ -81,7 +81,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCoupons(Long clientId) throws CouponSystemException{
 
-		Customer customer=validateCustomer(clientId);
+		validateCustomer(clientId);
 
 		List<Coupon> couponsByCustomerId = couponRepository.findByCustomerId(clientId);
 
@@ -92,7 +92,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCouponsByCategory(Long clientId ,Category category) throws CouponSystemException{
 
-		Customer customer=validateCustomer(clientId);
+		validateCustomer(clientId);
 
 		Long categoryId=category.getId();
 
@@ -110,7 +110,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCouponsByMaxPrice(Long clientId, double maxPrice) throws CouponSystemException{
 
-		Customer customer=validateCustomer(clientId);
+		validateCustomer(clientId);
 
 		List<Coupon> couponsByMaxPrice = couponRepository.findByCustomerIdAndUnitPriceLessThan(clientId,maxPrice);
 		return couponsByMaxPrice;
@@ -118,15 +118,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 	}
 
 	public Customer getCustomerDetails(Long clientId) throws CouponSystemException {
-
-
-		return validateCustomer(clientId);
 		
-		
-	}
-	
-	
-	private Customer validateCustomer(Long clientId) throws CouponSystemException {
 		Customer customer= customerRepository
 				.findById(clientId)
 				.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
@@ -135,6 +127,20 @@ public class CustomerService extends ClientService implements ClientLoginService
 			throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
 		
 		return customer;
+		
+	}
+	
+	
+	private void validateCustomer(Long clientId) throws CouponSystemException {
+		
+		
+		if(!customerRepository.existsById(clientId))
+			throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
+				
+		if(!customerRepository.getById(clientId).getIsActive())
+			throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+		
+		
 	}
 
 

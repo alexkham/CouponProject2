@@ -1,5 +1,6 @@
 package spring_boot_coupon_system.entities;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

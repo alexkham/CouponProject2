@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import spring_boot_coupon_system.exceptions.ErrorMessages;
 
 import spring_boot_coupon_system.entities.Company;
+import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;
+import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
 
 
@@ -50,12 +52,7 @@ public class AdminService extends ClientService {
 		
 		Long companyId=company.getCompanyId();
 		
-		Company companyToUpdate= companyRepository
-   				.findById(companyId)
-   				.orElseThrow(()->new CouponSystemException
-   						(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
-   		if(!company.getIsActive())
-   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
+		Company companyToUpdate= getOneCompany(companyId);
    		
    		if(!company.getName().equals(companyToUpdate.getName()))
    			throw new CouponSystemException(ErrorMessages.CAN_NOT_UPDATE_COMPANY_NAME);
@@ -69,17 +66,26 @@ public class AdminService extends ClientService {
 	@Transactional
 	public void deleteCompany(Long companyId) throws CouponSystemException {
 		//Checks the argument validity and creates new object in one piece of action
-   		 Company company=companyRepository
-   				.findById(companyId)
-   				.orElseThrow(()->new CouponSystemException(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
-   		 
-   		if(!company.getIsActive())
-   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
-   		
+   		 Company company=getOneCompany(companyId);
    		 
    		company.setIsActive(false);
-   		 
+   		
+   		   		 
 		companyRepository.save(company);
+		
+		List<Coupon> companyCoupons=company.getCompanyCoupons();
+		
+		for(Coupon coupon:companyCoupons)
+			coupon.setIsActive(false);
+		
+		couponRepository.saveAll(companyCoupons);
+		
+		List<Purchase> companyPurchases=purchaseRepository.findByCompany(company);
+		
+		for(Purchase purchase:companyPurchases)
+			purchase.setActive(false);
+		
+		purchaseRepository.saveAll(companyPurchases);
 		
 	}
 	
@@ -126,12 +132,10 @@ public class AdminService extends ClientService {
 		
 		Long customerId=customer.getId();
 		
-		 Customer customerToUpdate=customerRepository
-					.findById(customerId)
-					.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
-					 
-		if(!customer.getIsActive())
-					throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+		
+		 Customer customerToUpdate=getOneCustomer(customerId);
+		 
+		 customer.setIsActive(true);
 		
 		customerRepository.save(customer);
 		
@@ -140,14 +144,7 @@ public class AdminService extends ClientService {
 	@Transactional
 	public void deleteCustomer(Long customerId) throws CouponSystemException {
 		//Both validating and delivering data
-		 Customer customer=customerRepository
-				.findById(customerId)
-				.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
-		 
-		 
-		 if(!customer.getIsActive())
-				throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
-		 
+		 Customer customer=getOneCustomer(customerId);
 		 
 		 customer.setIsActive(false);
 		 

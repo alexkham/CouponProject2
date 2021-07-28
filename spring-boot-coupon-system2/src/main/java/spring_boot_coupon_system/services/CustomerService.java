@@ -42,7 +42,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 
 
-
+    @Transactional
 	public  Long  purchaseCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 
 		Customer customer= getCustomerDetails(clientId);
@@ -83,10 +83,10 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		validateCustomer(clientId);
 
-		List<Coupon> couponsByCustomerId = couponRepository.findByCustomerId(clientId);
+		//List<Coupon> couponsByCustomerId = couponRepository.findByCustomerId(clientId);
 
 
-		return couponsByCustomerId;
+		return null;//couponsByCustomerId;
 
 	}
 
@@ -96,10 +96,10 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		Long categoryId=category.getId();
 
-		List<Coupon> couponsByCustomerIdAndCategory = couponRepository.findByCustomerIdAndCategory(clientId,categoryId);
+		//List<Coupon> couponsByCustomerIdAndCategory = couponRepository.findByCustomerIdAndCategory(clientId,categoryId);
 
 
-		return couponsByCustomerIdAndCategory;
+		return null;//couponsByCustomerIdAndCategory;
 
 	}
 
@@ -112,8 +112,8 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		validateCustomer(clientId);
 
-		List<Coupon> couponsByMaxPrice = couponRepository.findByCustomerIdAndUnitPriceLessThan(clientId,maxPrice);
-		return couponsByMaxPrice;
+		//List<Coupon> couponsByMaxPrice = couponRepository.findByCustomerIdAndUnitPriceLessThan(clientId,maxPrice);
+		return null; //couponsByMaxPrice;
 
 	}
 

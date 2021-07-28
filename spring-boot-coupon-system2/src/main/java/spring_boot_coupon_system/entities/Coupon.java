@@ -2,6 +2,7 @@ package spring_boot_coupon_system.entities;
 
 import java.sql.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,10 +27,11 @@ public class Coupon {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private Company company;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@ToString.Exclude
 	private Category category;
 	private String title;
 	private String description;

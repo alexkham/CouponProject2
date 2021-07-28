@@ -16,7 +16,7 @@ public class SpringBootCouponSystemApplication {
 		
 		CompanyService cs=(CompanyService)context.getBean(CompanyService.class);
 		
-		System.out.println("success");
+		System.out.println("Application started OK!");
 		
 		
 		

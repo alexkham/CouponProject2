@@ -80,12 +80,12 @@ public class AdminService extends ClientService {
 		
 		couponRepository.saveAll(companyCoupons);
 		
-		List<Purchase> companyPurchases=purchaseRepository.findByCompany(company);
+		//List<Purchase> companyPurchases=purchaseRepository.findByCompany(company);
 		
-		for(Purchase purchase:companyPurchases)
-			purchase.setActive(false);
+		//for(Purchase purchase:companyPurchases)
+		//	purchase.setActive(false);
 		
-		purchaseRepository.saveAll(companyPurchases);
+		//purchaseRepository.saveAll(companyPurchases);
 		
 	}
 	
@@ -155,7 +155,7 @@ public class AdminService extends ClientService {
 	
 	public List<Customer> getAllCustomers(){
 		
-		return customerRepository.findByActiveTrue();
+		return customerRepository.findByIsActiveTrue();
 		
 	}
 	

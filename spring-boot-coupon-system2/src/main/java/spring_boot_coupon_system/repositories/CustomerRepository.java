@@ -10,7 +10,7 @@ import spring_boot_coupon_system.entities.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	
-	List<Customer> findByActiveTrue();
+	List<Customer> findByIsActiveTrue();
 	
 	Customer findByEmail(String email);
 	

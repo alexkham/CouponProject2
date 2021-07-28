@@ -11,6 +11,6 @@ import spring_boot_coupon_system.entities.Purchase;
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long>{
 	
-	public List<Purchase> findByCompany(Company company);
+	//public List<Purchase> findByCouponGetCompany(Company company);
 
 }

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "customers_vs_coupons")
+@Table(name = "purchases")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

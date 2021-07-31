@@ -80,23 +80,22 @@ public class AdminService extends ClientService {
 		
 		couponRepository.saveAll(companyCoupons);
 		
-		//List<Purchase> companyPurchases=purchaseRepository.findByCompany(company);
+		List<Purchase> companyPurchases=purchaseRepository.findByCouponGetCompany(companyId);
 		
-		//for(Purchase purchase:companyPurchases)
-		//	purchase.setActive(false);
+		for(Purchase purchase:companyPurchases)
+			purchase.setActive(false);
 		
-		//purchaseRepository.saveAll(companyPurchases);
+		purchaseRepository.saveAll(companyPurchases);
 		
 	}
 	
 	
-	//TODO
+	
 	public List<Company> getAllCompanies(){
 		
 		
-		//return companyRepository.findByActiveTrue();
+		return companyRepository.findByIsActiveTrue();
 		
-		return companyRepository.findAll().stream().filter(c->c.getIsActive()).collect(Collectors.toList());
 		
 	}
 	

@@ -20,7 +20,7 @@ public class InitCategories implements CommandLineRunner {
 	
 	protected static int categoriesCapacity=10;
 	
-	protected List<Category> categories=new ArrayList<>();
+	protected static List<Category> categories=new ArrayList<>();
 	
 	@Autowired
 	protected CategoryRepository categoryRepository;
@@ -34,27 +34,28 @@ public class InitCategories implements CommandLineRunner {
 		System.out.println(TestUtilsGraphics.CATEGORIES);
 		
 		
-		/*for(int i=0;i<categoriesCapacity;i++)
-			
-			categories.add(TestUtils.createRandomCategory());
 		
 		
-		
-		categoryRepository.saveAll(categories);*/
-		
-		/*Category category=Category.builder()
-				.categoryName("First category")
-				.build();
-		
-		categoryRepository.save(category);*/
-		
-		for(int i=0;i<categoriesCapacity;i++) {
+		for(int i=0;i<categoriesCapacity;i++) 
 			
 			
 			categories.add(Category.builder().categoryName(TestUtils.createRandomString(7)).build());
-		}
+		
 		
 		categoryRepository.saveAll(categories);
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
+		System.out.println("Tried to add "+categoriesCapacity+" categories");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
+		System.out.println("Actually added "+categories.size()+" categories");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
+		System.out.println((categoriesCapacity==categories.size())?"Success":" Having a problem");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
+		categoryRepository.findAll().forEach(System.out::println);
+		
 	}
 
 }

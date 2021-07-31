@@ -83,13 +83,13 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			throw new CouponSystemException(ErrorMessages.COUPON_TITLE_EXISTS);
 		
 		
-	//	else if(couponTitle!=null&&couponRepository.findByCompanyIdAndTitle(clientId, couponTitle) != null) 
+		else if(couponTitle!=null&&couponRepository.findByCompanyCompanyIdAndTitle(clientId, couponTitle) != null) 
 			
 			throw new CouponSystemException
 			(ErrorMessages.COUPON_TITLE_EXISTS);
 
 		
-	//	Coupon addedCoupon=couponRepository.save(coupon);
+		return couponRepository.save(coupon).getId();
 
 
 	}
@@ -114,7 +114,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			
 		else {
 			//Can use clientId either ,but since it already has passed the validation they should be equal 
-		//	otherCoupon=couponRepository.findByCompanyIdAndTitle(companyId, title);
+			otherCoupon=couponRepository.findByCompanyCompanyIdAndTitle(companyId, title);
 			
 			if(otherCoupon!=null&&otherCoupon.getId()!=couponId) 
 				
@@ -163,9 +163,9 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		validateCompany(clientId);
 		
-		//List<Coupon> companyCoupons=couponRepository.findByCompanyId(clientId);
+		List<Coupon> companyCoupons=couponRepository.findByCompanyCompanyId(clientId);
 		
-		return null;//companyCoupons;
+		return companyCoupons;
 
 	}
 	
@@ -175,9 +175,9 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		Long categoryId=category.getId();
 		
-		//List<Coupon> companyCouponsByCategory=couponRepository.findByCompanyIdAndCategoryId(clientId,categoryId);
+		List<Coupon> companyCouponsByCategory=couponRepository.findByCompanyCompanyIdAndCategoryId(clientId,categoryId);
 		
-		return null; //companyCouponsByCategory;
+		return companyCouponsByCategory;
 
 	}
        
@@ -186,7 +186,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
     	validateCompany(clientId);
    		
    		    	   
-		return null; //couponRepository.findByCompanyIdAndUnitPriceLessThan(clientId, maxPrice);
+		return couponRepository.findByCompanyCompanyIdAndUnitPriceLessThan(clientId, maxPrice);
     	   
     	   
        }

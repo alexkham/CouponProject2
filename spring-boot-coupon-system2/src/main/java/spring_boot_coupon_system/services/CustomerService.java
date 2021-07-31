@@ -83,10 +83,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		validateCustomer(clientId);
 
-		//List<Coupon> couponsByCustomerId = couponRepository.findByCustomerId(clientId);
+		List<Coupon> couponsByCustomerId = purchaseRepository
+				.findByCustomerId(clientId)
+				.stream()
+				.map(p->p.getCoupon())
+				.collect(Collectors.toList());
 
 
-		return null;//couponsByCustomerId;
+		return couponsByCustomerId;
 
 	}
 
@@ -96,10 +100,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		Long categoryId=category.getId();
 
-		//List<Coupon> couponsByCustomerIdAndCategory = couponRepository.findByCustomerIdAndCategory(clientId,categoryId);
+		List<Coupon> couponsByCustomerIdAndCategory = purchaseRepository
+				.findByCustomerId(clientId)
+				.stream()
+				.map(p->p.getCoupon())
+				.filter(c->c.getCategory().getId()==categoryId)
+				.collect(Collectors.toList());
 
-
-		return null;//couponsByCustomerIdAndCategory;
+		return couponsByCustomerIdAndCategory;
 
 	}
 
@@ -112,8 +120,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 		validateCustomer(clientId);
 
-		//List<Coupon> couponsByMaxPrice = couponRepository.findByCustomerIdAndUnitPriceLessThan(clientId,maxPrice);
-		return null; //couponsByMaxPrice;
+		List<Coupon> couponsByMaxPrice = purchaseRepository
+				.findByCustomerId(clientId)
+				.stream()
+				.map(p->p.getCoupon())
+				.filter(c->c.getUnitPrice()<=maxPrice)
+				.collect(Collectors.toList());
+
+		return couponsByMaxPrice;
 
 	}
 

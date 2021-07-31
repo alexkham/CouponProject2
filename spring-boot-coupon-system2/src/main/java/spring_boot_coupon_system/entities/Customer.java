@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,8 +34,8 @@ public class Customer {
 	private String lastName;
 	private String email;
 	private String password;
-	@OneToMany(cascade = CascadeType.PERSIST)
-	@ToString.Exclude
+	@OneToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+	//@ToString.Exclude
 	private List<Coupon> coupons=new ArrayList<>();
 	private Boolean isActive;
 

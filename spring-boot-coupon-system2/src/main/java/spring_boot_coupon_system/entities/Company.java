@@ -42,7 +42,7 @@ public class Company {
 	private Boolean isActive;
 	@OneToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
 	@Singular
-	@ToString.Exclude
+	//@ToString.Exclude
 	private List<Coupon> companyCoupons=new ArrayList<>();
 
 }

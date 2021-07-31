@@ -12,19 +12,16 @@ import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;
 
-
-
-
 public class TestUtils {
 
 
-	private static String starSeparator=printManyTimes(50, "*");
-	private static String warning=printManyTimes(50, "!");
-	public static String simpleSeparator=printManyTimes(50,"-");
-	private static int couponCount;
-	private static  int companiesCount;
-	private static int customerCount;
-	private static Date now=new Date(System.currentTimeMillis());
+	protected static String starSeparator=printManyTimes(50, "*");
+	protected static String warning=printManyTimes(50, "!");
+	protected static String simpleSeparator=printManyTimes(50,"-");
+	protected static int couponCount;
+	protected static  int companiesCount;
+	protected static int customerCount;
+	protected static Date now=new Date(System.currentTimeMillis());
 
 
 	public static Company createRandomCompanyNoCoupons() {
@@ -70,7 +67,7 @@ public class TestUtils {
 
 	}
 
-	public static Coupon createRandomCoupon(Company company) {
+	public static Coupon createRandomCoupon(Company company,Category category) {
 
 		Random random=new 	Random();
 
@@ -93,16 +90,16 @@ public class TestUtils {
 				.imageUrl(createRandomString(random.nextInt(10)+3))
 				.quantity(random.nextInt(100))
 				.unitPrice(random.nextDouble())
-				.category(createRandomCategory())
+				.category(category)
 				.company(company)
 				.build(); 
 	}
 
 	public static List<Coupon> createCompanyCoupons(int howMany, Company company){
-
+        Category category=createRandomCategory();
 		List<Coupon> companyCoupons=new ArrayList<>();
 		for(int i=0;i<howMany;i++)
-			companyCoupons.add(createRandomCoupon(company));
+			companyCoupons.add(createRandomCoupon(company,category));
 
 		return companyCoupons;
 

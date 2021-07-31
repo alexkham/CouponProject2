@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Coupon;
+import spring_boot_coupon_system.entities.Purchase;
 
 
 
@@ -18,11 +19,22 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	
 	List<Coupon> findByEndDateBefore(Date date);
 	
-/*	List<Coupon> findByCompanyId(Long companyId);
+	List<Coupon> findByCompanyCompanyId(Long companyId);
 	
-	/*Coupon findByCompanyIdAndTitle(Long companyId,String title);
+	Coupon findByCompanyCompanyIdAndTitle(Long companyId,String title);
+	
+	List<Coupon> findByCompanyCompanyIdAndCategoryId(Long companyId,Long categoryId);
+	
+	List<Coupon> findByCompanyCompanyIdAndUnitPriceLessThan(Long clientId, double maxPrice);
+	
+	
+	
+	
+	
 
-	List<Coupon> findByCompanyIdAndCategoryId(Long companyId,Long categoryId);
+	/*
+
+	
 	
 	List<Coupon> findByCustomerId(Long customerId);
 
@@ -31,7 +43,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
 	/*List<Coupon> findByCustomerIdAndUnitPriceLessThan(Long clientId, double maxPrice);
 	
-	List<Coupon> findByCompanyIdAndUnitPriceLessThan(Long clientId, double maxPrice);
+	
 	
 	*/
 	

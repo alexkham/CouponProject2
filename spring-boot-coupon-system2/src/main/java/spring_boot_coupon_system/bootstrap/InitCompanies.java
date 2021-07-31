@@ -35,10 +35,17 @@ public class InitCompanies implements CommandLineRunner{
 		
 		
 		companyRepository.saveAll(companies);
-		
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println("Tried to add "+companiesCapacity+" companies");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println("Actually added "+companies.size()+" companies");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println((companiesCapacity==companies.size())?"Success":" Having a problem");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		
 		companyRepository.findAll().forEach(System.out::println);
 		

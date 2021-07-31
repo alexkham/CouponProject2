@@ -34,10 +34,17 @@ public class InitCustomers implements CommandLineRunner{
 		
 		
 		customerRepository.saveAll(customers);
-		
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println("Tried to add "+customersCapacity+" customers");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println("Actually added "+customers.size()+" customers");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		System.out.println((customersCapacity==customers.size())?"Success":" Having a problem");
+		System.out.println(TestUtils.simpleSeparator);
+		System.out.println();
 		
 		customerRepository.findAll().forEach(System.out::println);
 	}

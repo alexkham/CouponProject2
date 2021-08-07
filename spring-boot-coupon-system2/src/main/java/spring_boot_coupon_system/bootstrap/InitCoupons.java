@@ -21,7 +21,7 @@ public class InitCoupons implements CommandLineRunner {
 	public static  List<Coupon>coupons=new ArrayList<>();
 	
 	@Autowired
-	protected CouponRepository couponRepository;
+	protected  CouponRepository couponRepository;
 	
 
 	@Override

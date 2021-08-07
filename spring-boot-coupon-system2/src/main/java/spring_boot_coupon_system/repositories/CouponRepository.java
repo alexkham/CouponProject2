@@ -17,6 +17,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	
 	List<Coupon> findByIsActiveTrue();
 	
+	
+	
 	List<Coupon> findByEndDateBefore(Date date);
 	
 	List<Coupon> findByCompanyCompanyId(Long companyId);
@@ -32,20 +34,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	
 	
 
-	/*
-
 	
-	
-	List<Coupon> findByCustomerId(Long customerId);
-
-	List<Coupon> findByCustomerIdAndCategory(Long clientId, Long categoryId);
-	*/
-
-	/*List<Coupon> findByCustomerIdAndUnitPriceLessThan(Long clientId, double maxPrice);
-	
-	
-	
-	*/
 	
 	
 

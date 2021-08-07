@@ -81,12 +81,13 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCoupons(Long clientId) throws CouponSystemException{
 
-		validateCustomer(clientId);
-
+		 validateCustomer(clientId);
+		 
 		List<Coupon> couponsByCustomerId = purchaseRepository
 				.findByCustomerId(clientId)
 				.stream()
 				.map(p->p.getCoupon())
+				.filter(c->c.getIsActive())
 				.collect(Collectors.toList());
 
 
@@ -96,7 +97,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCouponsByCategory(Long clientId ,Category category) throws CouponSystemException{
 
-		validateCustomer(clientId);
+		 validateCustomer(clientId);
 
 		Long categoryId=category.getId();
 
@@ -104,6 +105,7 @@ public class CustomerService extends ClientService implements ClientLoginService
 				.findByCustomerId(clientId)
 				.stream()
 				.map(p->p.getCoupon())
+				.filter(c->c.getIsActive())
 				.filter(c->c.getCategory().getId()==categoryId)
 				.collect(Collectors.toList());
 
@@ -118,12 +120,13 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	public List<Coupon> getCustomerCouponsByMaxPrice(Long clientId, double maxPrice) throws CouponSystemException{
 
-		validateCustomer(clientId);
+		 validateCustomer(clientId);
 
 		List<Coupon> couponsByMaxPrice = purchaseRepository
 				.findByCustomerId(clientId)
 				.stream()
 				.map(p->p.getCoupon())
+				.filter(c->c.getIsActive())
 				.filter(c->c.getUnitPrice()<=maxPrice)
 				.collect(Collectors.toList());
 
@@ -145,14 +148,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 	}
 	
 	
-	private void validateCustomer(Long clientId) throws CouponSystemException {
-		
+	public void validateCustomer(Long clientId) throws CouponSystemException {
 		
 		if(!customerRepository.existsById(clientId))
 			throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
 				
-		if(!customerRepository.getById(clientId).getIsActive())
+		if(!customerRepository.findById(clientId).get().getIsActive()) 
 			throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+
 		
 		
 	}

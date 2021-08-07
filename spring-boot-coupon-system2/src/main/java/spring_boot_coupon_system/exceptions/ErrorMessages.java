@@ -23,7 +23,8 @@ public enum ErrorMessages {
 	 "Can not purchase same coupon more than once"), 
 	COUPON_IS_NOT_IN_STOCK("This coupon currently isn't in stock and can not be purchased "), 
 	COUPON_EXPIRED("This coupon expired and can not be purchased"), 
-	UNATHORIZED_ACCES_ATTEMPT("Unathorized access attempt:the credentials provided do not allow to perform that action");
+	UNATHORIZED_ACCES_ATTEMPT("Unathorized access attempt:the credentials provided do not allow to perform that action"),
+	COUPON_ALREADY_EXISTS("Such coupon exists already in the database,can not add duplicates");
 	
 	private String message;
 

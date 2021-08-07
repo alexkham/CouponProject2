@@ -18,7 +18,7 @@ public class InitCustomers implements CommandLineRunner{
 	protected static List<Customer> customers=new ArrayList();
 	
 	@Autowired
-	protected CustomerRepository customerRepository;
+	protected   CustomerRepository customerRepository;
 
 	@Override
 	public void run(String... args) throws Exception {

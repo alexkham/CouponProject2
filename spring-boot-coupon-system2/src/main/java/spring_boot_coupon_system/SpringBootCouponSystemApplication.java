@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import spring_boot_coupon_system.bootstrap.InitCustomers;
 import spring_boot_coupon_system.services.CompanyService;
 
 @SpringBootApplication
@@ -16,7 +17,7 @@ public class SpringBootCouponSystemApplication {
 		
 		CompanyService cs=(CompanyService)context.getBean(CompanyService.class);
 		
-		System.out.println("Application started OK!");
+		System.out.println("\t Application started OK!");
 		
 		
 		

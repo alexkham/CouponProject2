@@ -22,6 +22,7 @@ public class TestUtils {
 	protected static  int companiesCount;
 	protected static int customerCount;
 	protected static Date now=new Date(System.currentTimeMillis());
+	protected static Random random=new Random();
 
 
 	public static Company createRandomCompanyNoCoupons() {
@@ -48,6 +49,7 @@ public class TestUtils {
 		String email=createRandomEmail();
 		String password=createRandomString(6);
 		boolean isActive=true;
+		
 
 
 		return Customer.builder()
@@ -56,6 +58,7 @@ public class TestUtils {
 				.email(createRandomEmail())
 				.password(createRandomString(new Random().nextInt(10)+2))
 				.isActive(true)
+				.coupons(new ArrayList<Coupon>())
 				.build();
 	}
 
@@ -89,7 +92,7 @@ public class TestUtils {
 				.isActive(true)
 				.imageUrl(createRandomString(random.nextInt(10)+3))
 				.quantity(random.nextInt(100))
-				.unitPrice(random.nextDouble())
+				.unitPrice(random.nextDouble()*10)
 				.category(category)
 				.company(company)
 				.build(); 

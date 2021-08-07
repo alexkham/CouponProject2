@@ -2,6 +2,7 @@ package spring_boot_coupon_system.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -41,18 +42,10 @@ public class CompanyService extends ClientService implements ClientLoginService 
 
 
 	public boolean isCompanyExists(Long clientId, String email,String password) throws CouponSystemException {
-		//Case there is wrong client id provided
-		Company company=getCompanyDetails(clientId);
-		//Comparing actual data with arguments
-		String clientEmail=company.getEmail().trim();
-		String clientPassword=company.getPassword().trim();
-		if(!(clientEmail.equalsIgnoreCase(email.trim())&&clientPassword.equalsIgnoreCase(password))) {
+		
+		validateCompany(clientId);
 
-			throw new CouponSystemException(ErrorMessages.WRONG_DATA_PROVIDED);
-		}
-
-		//Might be redundant :may just return true
-		return company.equals(companyRepository.findByEmailAndPassword(email, password));
+		return (companyRepository.findByEmailAndPassword(email, password)!=null);
 
 
 	}
@@ -70,7 +63,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			throw new CouponSystemException
 			(ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
 		
-		Optional<Coupon> optionalCoupon=couponRepository.findById(coupon.getId());
+		Coupon optionalCoupon=couponRepository.findById(coupon.getId()).get();
 		String couponTitle=coupon.getTitle();
 		
 
@@ -79,8 +72,8 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		//Cover the case argument coupon's id is null
 
 
-		 if(optionalCoupon.get()!=null) 
-			throw new CouponSystemException(ErrorMessages.COUPON_TITLE_EXISTS);
+		 if(optionalCoupon!=null) 
+			throw new CouponSystemException(ErrorMessages.COUPON_ALREADY_EXISTS);
 		
 		
 		else if(couponTitle!=null&&couponRepository.findByCompanyCompanyIdAndTitle(clientId, couponTitle) != null) 
@@ -94,7 +87,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 
 	}
 
-	public void updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
+	public Coupon updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 		
 		
 		//Checking if company exists
@@ -122,7 +115,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			
 		}
 		
-		couponRepository.save(coupon);
+		return couponRepository.save(coupon);
 
 		
 	}
@@ -163,7 +156,10 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		validateCompany(clientId);
 		
-		List<Coupon> companyCoupons=couponRepository.findByCompanyCompanyId(clientId);
+		List<Coupon> companyCoupons=couponRepository.findByCompanyCompanyId(clientId)
+				.stream()
+				.filter(c->c.getIsActive())
+				.collect(Collectors.toList());
 		
 		return companyCoupons;
 
@@ -175,7 +171,10 @@ public class CompanyService extends ClientService implements ClientLoginService 
 		
 		Long categoryId=category.getId();
 		
-		List<Coupon> companyCouponsByCategory=couponRepository.findByCompanyCompanyIdAndCategoryId(clientId,categoryId);
+		List<Coupon> companyCouponsByCategory=couponRepository.findByCompanyCompanyIdAndCategoryId(clientId,categoryId)
+				.stream()
+				.filter(c->c.getIsActive())
+				.collect(Collectors.toList());
 		
 		return companyCouponsByCategory;
 
@@ -186,7 +185,10 @@ public class CompanyService extends ClientService implements ClientLoginService 
     	validateCompany(clientId);
    		
    		    	   
-		return couponRepository.findByCompanyCompanyIdAndUnitPriceLessThan(clientId, maxPrice);
+		return couponRepository.findByCompanyCompanyIdAndUnitPriceLessThan(clientId, maxPrice)
+				.stream()
+				.filter(c->c.getIsActive())
+				.collect(Collectors.toList());
     	   
     	   
        }
@@ -206,13 +208,13 @@ public class CompanyService extends ClientService implements ClientLoginService 
    		
 	}
        
-       private void validateCompany(Long clientId) throws CouponSystemException {
+       public void validateCompany(Long clientId) throws CouponSystemException {
     	   
     	   
    		if(!companyRepository.existsById(clientId))
    					throw new CouponSystemException(ErrorMessages.CLIENT_ID_DOES_NOT_EXIST);
    		
-   		if(!companyRepository.getById(clientId).getIsActive())
+   		if(!companyRepository.findById(clientId).get().getIsActive())
       			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
    		
    		

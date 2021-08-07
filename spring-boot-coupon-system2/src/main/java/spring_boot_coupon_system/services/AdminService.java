@@ -26,14 +26,17 @@ public class AdminService extends ClientService {
 	private static final String ADMIN_EMAIL = "admin@admin.com";
 	
 
-	public boolean login(String email, String password) {
-		return email.equalsIgnoreCase(ADMIN_EMAIL)
-				&&password.equals(ADMIN_PASSWORD);
+	public boolean login(String email, String password) throws CouponSystemException {
+		
+		if(!email.equalsIgnoreCase(ADMIN_EMAIL)&&!password.equals(ADMIN_PASSWORD))
+				throw new CouponSystemException(ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
+		
+		return true;
 	}
 	
 	
 	
-	public void addCompany(Company company) throws CouponSystemException {
+	public Long addCompany(Company company) throws CouponSystemException {
 		
 		Company companyByName=companyRepository.findByName(company.getName());
 		Company companyByEmail=companyRepository.findByEmail(company.getEmail());
@@ -44,7 +47,7 @@ public class AdminService extends ClientService {
 			throw new CouponSystemException(ErrorMessages.COMPANY_EMAIL_EXISTS);
 		
 		
-		companyRepository.save(company);
+		return companyRepository.save(company).getCompanyId();
 		
 	}
 	
@@ -65,28 +68,28 @@ public class AdminService extends ClientService {
 	
 	@Transactional
 	public void deleteCompany(Long companyId) throws CouponSystemException {
+		
 		//Checks the argument validity and creates new object in one piece of action
-   		 Company company=getOneCompany(companyId);
+		Company company= companyRepository
+   				.findById(companyId)
+   				.orElseThrow(()->new CouponSystemException
+   						(ErrorMessages.COMPANY_ID_DOES_NOT_EXIST));
+   		if(!company.getIsActive())
+   			throw new CouponSystemException(ErrorMessages.COMPANY_IS_INACTIVE);
    		 
    		company.setIsActive(false);
    		
    		   		 
 		companyRepository.save(company);
 		
-		List<Coupon> companyCoupons=company.getCompanyCoupons();
+		List<Coupon> companyCoupons=couponRepository.findByCompanyCompanyId(companyId);
 		
 		for(Coupon coupon:companyCoupons)
 			coupon.setIsActive(false);
 		
 		couponRepository.saveAll(companyCoupons);
 		
-		List<Purchase> companyPurchases=purchaseRepository.findByCouponGetCompany(companyId);
-		
-		for(Purchase purchase:companyPurchases)
-			purchase.setActive(false);
-		
-		purchaseRepository.saveAll(companyPurchases);
-		
+	
 	}
 	
 	
@@ -114,14 +117,14 @@ public class AdminService extends ClientService {
 				
 	}
 	
-	public void addCustomer(Customer customer) throws CouponSystemException {
+	public Customer addCustomer(Customer customer) throws CouponSystemException {
 		
 		Customer customerByEmail=customerRepository.findByEmail(customer.getEmail());
 		
 		if(customerByEmail!=null&&customerByEmail.getIsActive())
 			throw new CouponSystemException(ErrorMessages.CUSTOMER_EMAIL_EXISTS);
 		
-		customerRepository.save(customer);
+		return customerRepository.save(customer);
 		
 		
 		
@@ -129,13 +132,13 @@ public class AdminService extends ClientService {
 	
 	public void updateCustomer(Customer customer) throws CouponSystemException {
 		
+		
 		Long customerId=customer.getId();
 		
+		//Will validate customer by Id(if both existing and active) and if not -proper exceptions will be thrown
+		Customer customerToUpdate= getOneCustomer(customerId);
 		
-		 Customer customerToUpdate=getOneCustomer(customerId);
-		 
-		 customer.setIsActive(true);
-		
+		//Once passes validation- no reason not to update
 		customerRepository.save(customer);
 		
 	}
@@ -143,11 +146,23 @@ public class AdminService extends ClientService {
 	@Transactional
 	public void deleteCustomer(Long customerId) throws CouponSystemException {
 		//Both validating and delivering data
-		 Customer customer=getOneCustomer(customerId);
+		Customer customer= customerRepository
+				.findById(customerId)
+				.orElseThrow(()->new CouponSystemException(ErrorMessages.CUSTOMER_ID_DOES_NOT_EXIST));
+
+         if(!customer.getIsActive())
+	        throw new CouponSystemException(ErrorMessages.CUSTOMER_IS_INACTIVE);
+
 		 
 		 customer.setIsActive(false);
 		 
 		 customerRepository.save(customer);
+		 
+		 List<Purchase> customerPurchases=purchaseRepository.findByCustomerId(customerId);
+		 for(Purchase purchase:customerPurchases)
+			 purchase.setActive(false);
+		 
+		 purchaseRepository.saveAll(customerPurchases);
 		
 	}
 	

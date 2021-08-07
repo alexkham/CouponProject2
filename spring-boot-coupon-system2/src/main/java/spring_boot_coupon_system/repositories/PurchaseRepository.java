@@ -15,7 +15,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long>{
 	
 	
 	@Query(value=" SELECT p  FROM Purchase p  WHERE p.coupon.company.companyId=companyId")
-	public List<Purchase> findByCouponGetCompany(@Param("companyId") Long companyId);
+    List<Purchase> findByCouponGetCompany(@Param("companyId") Long companyId);
 	
 	List<Purchase> findByCustomerId(Long customerId);
 

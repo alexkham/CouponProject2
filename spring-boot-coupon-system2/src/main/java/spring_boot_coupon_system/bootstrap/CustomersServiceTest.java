@@ -48,13 +48,13 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 		
 		testCustomerLoginMethod();
 		
-       // testGetCustomersDetails(150000l,6l);
+        testGetCustomersDetails();
        
-      //  testGetCustomersCoupons();
+        testGetCustomersCoupons();
         
-     //   testGetCustomerCouponsByCategory();
+        testGetCustomerCouponsByCategory();
         
-      //  testGetCustomerCouponsByMaxPrice();
+        testGetCustomerCouponsByMaxPrice();
         
     //    testPurchaseCouponMethod();
        
@@ -126,13 +126,15 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 	
 	@Test
 	@Transactional
-	private void testGetCustomersDetails(Long nonExistId,Long existId) throws CouponSystemException{
+	private void testGetCustomersDetails() throws CouponSystemException{
 		
 		System.out.println("\t Testing getCustomerDetails method");
 		System.out.println("\t"+TestUtils.starSeparator);
 		System.out.println();
 		
 		System.out.println("\t Trying to get customer details with non existing Id number");
+		
+		Long nonExistId=10000l;
 		
 		  try {
 		    	
@@ -152,11 +154,21 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 		  System.out.println("\t Trying to get customer details with existing Id number");
 		  System.out.println("\t"+TestUtils.simpleSeparator);
 		  
-		   Customer customer=customerService.getCustomerDetails(existId);
+		  Customer existingCustomer=customerRepository
+				  .findAll()
+				  .get(TestUtils.random.nextInt(InitCustomers.customersCapacity));
+		  
+		  Long existId=existingCustomer.getId();
+		  
+		  Customer actualCustomer=customerService.getCustomerDetails(existId);
 		
 		   try {
-			   assertNotNull(customer);
-			   assertEquals(customer.getId(), existId);
+			   assertNotNull(actualCustomer);
+			   assertEquals(existingCustomer.getId(), actualCustomer.getId());
+			   assertEquals(existingCustomer.getFirstName(), actualCustomer.getFirstName());
+			   assertEquals(existingCustomer.getLastName(), actualCustomer.getLastName());
+			   assertEquals(existingCustomer.getEmail(), actualCustomer.getEmail());
+			   assertEquals(existingCustomer.getPassword(), actualCustomer.getPassword());
 			   System.out.println("\t Success");
 			   System.out.println("\t"+TestUtils.simpleSeparator);
 		} catch (Exception e) {
@@ -165,15 +177,14 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 			
 			e.printStackTrace();
 		}
-		   
 		   System.out.println("\t Trying to get customer details of an inactive customer ");
 		   
-		   customer.setIsActive(false);
-		   customerRepository.save(customer);
+		   existingCustomer.setIsActive(false);
+		   customerRepository.save(existingCustomer);
 		   
 		   try {
 		    	
-			    assertThrows(CouponSystemException.class, ()->customerService.getCustomerDetails(customer.getId()));
+			    assertThrows(CouponSystemException.class, ()->customerService.getCustomerDetails(existingCustomer.getId()));
 				System.out.println("\t Passed successfully! "+CouponSystemException.class.getName()+" has been thrown");
 				System.out.println("\t"+TestUtils.starSeparator);
 				
@@ -186,8 +197,8 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 			     
 			}
 		   
-		   customer.setIsActive(true);
-		   customerRepository.save(customer);
+		   existingCustomer.setIsActive(true);
+		   customerRepository.save(existingCustomer);
 				
 	}
 	

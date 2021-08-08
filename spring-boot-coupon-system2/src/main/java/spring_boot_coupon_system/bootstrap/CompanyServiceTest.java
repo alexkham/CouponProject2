@@ -33,14 +33,13 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println();
 		
 		testCompanyLoginMethod();
-		testGetCompanyDetailsMethod
-		(InitCompanies.companiesCapacity+5l,TestUtils.random.nextInt(InitCompanies.companiesCapacity)+1l);
+		testGetCompanyDetailsMethod();
 		testIsCompanyExist();
 		testUpdateCouponMethod();
 		//testGetCompanyCoupons();
-		//testGetCompanyCouponsByCategory();
-		//testGetCompanyCouponsByMaxPrice();
-		//testAddCouponMethod();
+		testGetCompanyCouponsByCategory();
+		testGetCompanyCouponsByMaxPrice();
+		testAddCouponMethod();
 		testValidateCompanyMethod();
 		
 	}
@@ -154,13 +153,14 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 	}
 	@Test
 	@Transactional
-	private void testGetCompanyDetailsMethod(Long nonExistId,Long existId) throws CouponSystemException {
+	private void testGetCompanyDetailsMethod() throws CouponSystemException {
 		
 		System.out.println("\t Testing getCompanyDetails method");
 		System.out.println("\t"+TestUtils.starSeparator);
 		System.out.println();
 		
 		System.out.println("\t Trying to get company details with non existing company Id number");
+		Long nonExistId=10000l;
 		
 		  try {
 		    	
@@ -180,11 +180,21 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		  System.out.println("\t Trying to get company details with existing Id number");
 		  System.out.println("\t"+TestUtils.simpleSeparator);
 		  
-		   Company company=companyService.getCompanyDetails(existId);
+		  
+		  Company existingCompany=companyRepository
+				  .findAll()
+				  .get(TestUtils.random.nextInt(InitCompanies.companiesCapacity));
+		  
+		  Long existId=existingCompany.getCompanyId();
+		  
+		  Company actualCompany=companyService.getCompanyDetails(existId);
 		
 		   try {
-			   assertNotNull(company);
-			   assertEquals(company.getCompanyId(), existId);
+			   assertNotNull(actualCompany);
+			   assertEquals(existingCompany.getCompanyId(), actualCompany.getCompanyId());
+			   assertEquals(existingCompany.getName(), actualCompany.getName());
+			   assertEquals(existingCompany.getEmail(), actualCompany.getEmail());
+			   assertEquals(existingCompany.getPassword(), actualCompany.getPassword());
 			   System.out.println("\t Success");
 			   System.out.println("\t"+TestUtils.simpleSeparator);
 		} catch (Exception e) {
@@ -196,12 +206,12 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		   
         System.out.println("\t Trying to get company details of an inactive company ");
 		   
-		   company.setIsActive(false);
-		   companyRepository.save(company);
+		   actualCompany.setIsActive(false);
+		   companyRepository.save(actualCompany);
 		   
 		   try {
 		    	
-			    assertThrows(CouponSystemException.class, ()->companyService.getCompanyDetails(company.getCompanyId()));
+			    assertThrows(CouponSystemException.class, ()->companyService.getCompanyDetails(actualCompany.getCompanyId()));
 				System.out.println("\t Passed successfully! "+CouponSystemException.class.getName()+" has been thrown");
 				System.out.println("\t"+TestUtils.starSeparator);
 				
@@ -214,15 +224,15 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			     
 			}
 		   
-		   company.setIsActive(true);
-		   companyRepository.save(company);
+		   actualCompany.setIsActive(true);
+		   companyRepository.save(actualCompany);
 		
 	}
 	@Test
 	@Transactional
 	private void testIsCompanyExist() throws CouponSystemException {
 		
-		System.out.println("\t Testing isCompanyExist() method");
+		 System.out.println("\t Testing isCompanyExist() method");
 		 System.out.println("\t"+TestUtils.simpleSeparator);
 		 System.out.println();
 		 
@@ -274,12 +284,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 	}
 	
-	@Test
-	private void testAddCoupon() {
-		
-		
-		
-	}
+	
 	
 	@Test
 	@Transactional
@@ -508,20 +513,20 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		
 
-		System.out.println("\t Adding coupon successfully ");
+		/*System.out.println("\t Adding coupon successfully ");
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
-		/*Coupon couponToAdd4=TestUtils
+		Coupon couponToAdd4=TestUtils
 				.createRandomCoupon
 				(companyService.getCompanyDetails(clientId), categoryRepository.findById(1l).get());
-		couponToAdd3.setId(100l);
+		couponToAdd4.setId(100l);
 		
 		Long actualId=companyService.addCoupon(clientId, couponToAdd4);
 		couponToAdd4.setId(actualId);
 		Coupon actualAddedCoupon=couponRepository.findById(actualId).get();
 		
-		/*try {
+		try {
 			assertEquals(couponToAdd4, actualAddedCoupon);
 			System.out.println("\t Success : coupon"+couponToAdd4.toString()+" has been added ");
 			System.out.println("\t"+TestUtils.simpleSeparator);

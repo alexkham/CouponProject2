@@ -27,7 +27,7 @@ public class Coupon {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne//(cascade = CascadeType.MERGE)
 	@ToString.Exclude
 	private Company company;
 	@ManyToOne(cascade = CascadeType.MERGE)

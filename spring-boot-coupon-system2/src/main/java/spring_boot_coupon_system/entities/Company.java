@@ -40,7 +40,7 @@ public class Company {
 	private String email;
 	private String password;
 	private Boolean isActive;
-	@OneToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER) // cascade = CascadeType.MERGE)
 	@Singular
 	//@ToString.Exclude
 	private List<Coupon> companyCoupons=new ArrayList<>();

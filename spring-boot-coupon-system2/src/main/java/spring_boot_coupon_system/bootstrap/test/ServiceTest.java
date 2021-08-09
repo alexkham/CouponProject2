@@ -1,4 +1,4 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

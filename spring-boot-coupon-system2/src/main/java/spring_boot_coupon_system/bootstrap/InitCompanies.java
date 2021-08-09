@@ -15,11 +15,11 @@ import spring_boot_coupon_system.repositories.CompanyRepository;
 @Order(2)
 public class InitCompanies implements CommandLineRunner{
 	
-	protected static  int companiesCapacity = 10;
+	public static  int companiesCapacity = 10;
 	@Autowired
 	protected CompanyRepository companyRepository;
 	
-	protected static List<Company> companies=new ArrayList<>();
+	public static List<Company> companies=new ArrayList<>();
 	
 
 	@Override

@@ -1,4 +1,4 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,6 +23,12 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import spring_boot_coupon_system.bootstrap.init.InitCategories;
+import spring_boot_coupon_system.bootstrap.InitCompanies;
+import spring_boot_coupon_system.bootstrap.InitCustomers;
+import spring_boot_coupon_system.bootstrap.InitPurchases;
+
+import spring_boot_coupon_system.bootstrap.TestUtils;
 import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
@@ -56,7 +62,7 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
         
         testGetCustomerCouponsByMaxPrice();
         
-    //    testPurchaseCouponMethod();
+        testPurchaseCouponMethod();
        
         
         
@@ -300,6 +306,15 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 			
 			e.printStackTrace();
 		}
+		 
+		 for(int i=0;i<customerCoupons.size();i++)
+				
+		      if(i%2==0) {
+		    	  customerCoupons.get(i).setIsActive(true);
+		    	  
+		      }
+		
+		couponRepository.saveAll(customerCoupons);
 		
 	}
 	
@@ -419,7 +434,7 @@ public class CustomersServiceTest extends ServiceTest implements CommandLineRunn
 		
 		nonExistingCoupon.setId(1000l);
 		
-		Long clientId= 6l;//TestUtils.random.nextInt(InitCustomers.customersCapacity/2)+1l;
+		Long clientId= TestUtils.random.nextInt(InitCustomers.customersCapacity/2)+1l;
 		
 		 try {
 				assertThrows

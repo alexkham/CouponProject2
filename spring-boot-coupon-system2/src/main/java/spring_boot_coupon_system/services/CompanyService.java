@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 
@@ -15,6 +16,7 @@ import lombok.Getter;
 import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
+import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
 import spring_boot_coupon_system.exceptions.ErrorMessages;
 import spring_boot_coupon_system.repositories.CompanyRepository;
@@ -51,7 +53,7 @@ public class CompanyService extends ClientService implements ClientLoginService 
 	}
 
 	@Transactional
-	public long addCoupon(Long clientId ,Coupon coupon) throws CouponSystemException {
+	public Long addCoupon(Long clientId ,Coupon coupon) throws CouponSystemException {
 		
 		
 		//Checking if company exists and active
@@ -63,28 +65,22 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			throw new CouponSystemException
 			(ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
 		
-		Coupon optionalCoupon=couponRepository.findById(coupon.getId()).get();
-		String couponTitle=coupon.getTitle();
+		 if(couponRepository.existsById(coupon.getId()))
+			 throw new CouponSystemException(ErrorMessages.COUPON_ALREADY_EXISTS);
 		
-
-		
-		//Checking if such coupon already exists
-		//Cover the case argument coupon's id is null
-
-
-		 if(optionalCoupon!=null) 
-			throw new CouponSystemException(ErrorMessages.COUPON_ALREADY_EXISTS);
-		
-		
-		else if(couponTitle!=null&&couponRepository.findByCompanyCompanyIdAndTitle(clientId, couponTitle) != null) 
+		 String couponTitle=coupon.getTitle();
+		 if(couponTitle!=null&&couponRepository.findByCompanyCompanyIdAndTitle(clientId, couponTitle) != null) 
 			
 			throw new CouponSystemException
 			(ErrorMessages.COUPON_TITLE_EXISTS);
-
 		
-		return couponRepository.save(coupon).getId();
-
-
+		
+		 Coupon couponToAdd=couponRepository.save(coupon);
+		 
+		 
+		return couponToAdd.getId();
+		
+	
 	}
 
 	public Coupon updateCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
@@ -123,7 +119,11 @@ public class CompanyService extends ClientService implements ClientLoginService 
     @Transactional
 	public void deleteCoupon(Long clientId, long couponId) throws CouponSystemException {
 		
+    	//Checking if company exists
+    	validateCompany(clientId);
 		
+    	
+    	
 		Coupon coupon=couponRepository.findById( couponId).
 				orElseThrow(()->new CouponSystemException(ErrorMessages.COUPON_DOES_NOT_EXIST));
 		
@@ -131,25 +131,24 @@ public class CompanyService extends ClientService implements ClientLoginService 
 			throw new CouponSystemException(ErrorMessages.COUPON_IS_INACTIVE);
 		
 		Long companyId=coupon.getCompany().getCompanyId();
-		boolean active=coupon.getIsActive();
-		
-		//Checking if company exists
-		validateCompany(clientId);
-		
+				
 	    if(companyId!=null&&companyId!=clientId) 
 			
 			 throw new CouponSystemException
 			 (ErrorMessages.UNATHORIZED_ACCES_ATTEMPT);
 	    
-		else if(!active)
-				throw new CouponSystemException(ErrorMessages.COUPON_IS_INACTIVE);
+				
+	    coupon.setIsActive(false);
+		couponRepository.save(coupon);
 		
-			else {
-				coupon.setIsActive(false);
-				couponRepository.save(coupon);
+		List<Purchase> purchaseHistory=purchaseRepository.findByCouponId(couponId);
+		
+		for(Purchase purchase:purchaseHistory)
+			purchase.setActive(false);
+		
+		purchaseRepository.saveAll(purchaseHistory);
 					
-		}
-		
+			
 	}
 
 	public List<Coupon> getCompanyCoupons(Long clientId) throws CouponSystemException{

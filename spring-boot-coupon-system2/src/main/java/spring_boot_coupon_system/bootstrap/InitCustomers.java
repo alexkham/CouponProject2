@@ -14,7 +14,7 @@ import spring_boot_coupon_system.repositories.CustomerRepository;
 @Order(1)
 public class InitCustomers implements CommandLineRunner{
 	
-	protected static int  customersCapacity=10;
+	public static int  customersCapacity=10;
 	protected static List<Customer> customers=new ArrayList();
 	
 	@Autowired

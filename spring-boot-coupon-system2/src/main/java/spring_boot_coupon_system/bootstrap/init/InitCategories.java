@@ -1,4 +1,4 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.TestUtils;
+import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
 import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.repositories.CategoryRepository;
@@ -18,9 +20,9 @@ import spring_boot_coupon_system.repositories.CouponRepository;
 public class InitCategories implements CommandLineRunner {
     
 	
-	protected static int categoriesCapacity=10;
+	public static int categoriesCapacity=10;
 	
-	protected static List<Category> categories=new ArrayList<>();
+	public static List<Category> categories=new ArrayList<>();
 	
 	@Autowired
 	protected CategoryRepository categoryRepository;

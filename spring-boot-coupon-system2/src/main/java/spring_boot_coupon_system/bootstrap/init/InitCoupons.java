@@ -1,4 +1,4 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
 
@@ -10,13 +10,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.InitCompanies;
+import spring_boot_coupon_system.bootstrap.TestUtils;
+import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
+import spring_boot_coupon_system.bootstrap.init.InitCategories;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.repositories.CouponRepository;
 @Component
 @Order(4)
 public class InitCoupons implements CommandLineRunner {
 	
-	protected static int couponCapacity=10;
+	public static int couponCapacity=10;
 	
 	public static  List<Coupon>coupons=new ArrayList<>();
 	
@@ -33,7 +37,9 @@ public class InitCoupons implements CommandLineRunner {
 			
 			for(int j=0;j<couponCapacity;j++)
 				
-			coupons.add(TestUtils.createRandomCoupon(InitCompanies.companies.get(i), InitCategories.categories.get(new Random().nextInt(10))));
+			coupons.add
+			(TestUtils.createRandomCoupon
+				(InitCompanies.companies.get(i), InitCategories.categories.get(new Random().nextInt(10))));
 			
 		
 		}

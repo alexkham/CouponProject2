@@ -1,7 +1,8 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,10 +16,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.init.InitCategories;
+import spring_boot_coupon_system.bootstrap.InitCompanies;
+import spring_boot_coupon_system.bootstrap.init.InitCoupons;
+import spring_boot_coupon_system.bootstrap.TestUtils;
 import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;
+import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
 
 @Component
@@ -36,11 +42,14 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		testGetCompanyDetailsMethod();
 		testIsCompanyExist();
 		testUpdateCouponMethod();
-		//testGetCompanyCoupons();
+		testGetCompanyCoupons();
 		testGetCompanyCouponsByCategory();
 		testGetCompanyCouponsByMaxPrice();
 		testAddCouponMethod();
 		testValidateCompanyMethod();
+		testDeleteCouponMethod();
+		
+		
 		
 	}
 	
@@ -343,6 +352,15 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			
 			e.printStackTrace();
 		}
+		 
+		 for(int i=0;i<companyCoupons.size();i++)
+				
+		      if(i%2==0) {
+		    	  companyCoupons.get(i).setIsActive(true);
+		    	  
+		      }
+		
+		couponRepository.saveAll(companyCoupons);
 		
 	}
 	
@@ -513,21 +531,32 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		
 
-		/*System.out.println("\t Adding coupon successfully ");
+		System.out.println("\t Adding coupon successfully ");
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
-		Coupon couponToAdd4=TestUtils
-				.createRandomCoupon
-				(companyService.getCompanyDetails(clientId), categoryRepository.findById(1l).get());
-		couponToAdd4.setId(100l);
 		
-		Long actualId=companyService.addCoupon(clientId, couponToAdd4);
+		Company company=companyRepository
+				.findAll()
+				.get(TestUtils.random.nextInt(InitCompanies.companiesCapacity));
+		Category category=categoryRepository
+				.findAll()
+				.get(TestUtils.random.nextInt(InitCategories.categoriesCapacity/2));
+		Coupon couponToAdd4=TestUtils.createRandomCoupon(company, category);
+		couponToAdd4.setId(10000l);
+		Long actualId=companyService.addCoupon(company.getCompanyId(),couponToAdd4);
+		
+		
+		
 		couponToAdd4.setId(actualId);
-		Coupon actualAddedCoupon=couponRepository.findById(actualId).get();
+	    Coupon actualAddedCoupon=couponRepository.findById(actualId).get();
 		
 		try {
-			assertEquals(couponToAdd4, actualAddedCoupon);
+			assertNotNull(actualAddedCoupon);
+			assertEquals(couponToAdd4.getTitle(), actualAddedCoupon.getTitle());
+			assertEquals(couponToAdd4.getDescription(), actualAddedCoupon.getDescription());
+			assertEquals(couponToAdd4.getQuantity(), actualAddedCoupon.getQuantity());
+			assertEquals(couponToAdd4.getIsActive(), actualAddedCoupon.getIsActive());
 			System.out.println("\t Success : coupon"+couponToAdd4.toString()+" has been added ");
 			System.out.println("\t"+TestUtils.simpleSeparator);
 			System.out.println();
@@ -537,7 +566,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			System.out.println("\t"+TestUtils.warning);
 		    System.out.println("\t DID NOT PASS !");
 			System.out.println("\t"+TestUtils.starSeparator);
-		}*/
+		}
 		
 		
 		
@@ -628,12 +657,132 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 	}
 	
-	
-	
+		
 	
 	@Test
-	private void testDeleteCouponMethod() {
+	@Transactional
+	private void testDeleteCouponMethod() throws CouponSystemException {
 		
+		System.out.println("\t Testing deleteCoupon method");
+		System.out.println("\t"+TestUtils.simpleSeparator);
+		System.out.println();
+		
+		System.out.println("\t Trying to delete non-existing coupon");
+		System.out.println("\t"+TestUtils.simpleSeparator);
+		System.out.println();
+		
+		Company company=companyRepository
+				.findAll()
+				.get(TestUtils.random.nextInt(InitCompanies.companiesCapacity/2));
+		Category category=categoryRepository
+				.findAll()
+				.get(TestUtils.random.nextInt(InitCategories.categoriesCapacity/2));
+		Coupon unsavedCoupon=TestUtils.createRandomCoupon(company, category);
+		unsavedCoupon.setId(12345678l);
+		
+		try {
+			assertThrows(CouponSystemException.class,
+					()->companyService.deleteCoupon(company.getCompanyId(), unsavedCoupon.getId()));
+					
+			System.out.println("\t Passed successfully: proper exception has been thrown ");
+			
+			System.out.println("\t"+TestUtils.starSeparator);
+			
+		} catch (Throwable t) {
+			 t.printStackTrace();
+			 System.out.println("\t"+TestUtils.warning);
+		     System.out.println("\t DID NOT PASS !");
+			 System.out.println("\t"+TestUtils.starSeparator);
+		}
+		
+		System.out.println("\t Trying to delete inactive coupon");
+		System.out.println("\t"+TestUtils.simpleSeparator);
+		System.out.println();
+		
+		Coupon existingCoupon=couponRepository
+				.findAll()
+				.get(TestUtils.random.nextInt(InitCoupons.couponCapacity));
+		
+		Long companyId=existingCoupon.getCompany().getCompanyId();
+		existingCoupon.setIsActive(false);
+		couponRepository.save(existingCoupon);
+		
+		try {
+			assertThrows(CouponSystemException.class,()->companyService.deleteCoupon(companyId, existingCoupon.getId()));
+					
+			System.out.println("\t Passed successfully: proper exception has been thrown ");
+			
+			System.out.println("\t"+TestUtils.starSeparator);
+			
+		} catch (Throwable t) {
+			 t.printStackTrace();
+			 System.out.println("\t"+TestUtils.warning);
+		     System.out.println("\t DID NOT PASS !");
+			 System.out.println("\t"+TestUtils.starSeparator);
+		}
+		
+		existingCoupon.setIsActive(true);
+		couponRepository.save(existingCoupon);
+		
+		System.out.println("\t Trying to delete coupon belonging to another company ");
+		System.out.println("\t"+TestUtils.simpleSeparator);
+		System.out.println();
+		
+		
+		
+		try {
+			assertThrows(CouponSystemException.class,
+					()->companyService.deleteCoupon
+					(((companyId<5)?(companyId+1l):(companyId-1l)), existingCoupon.getId()));
+					
+			System.out.println("\t Passed successfully: proper exception has been thrown ");
+			
+			System.out.println("\t"+TestUtils.starSeparator);
+			
+		} catch (Throwable t) {
+			 t.printStackTrace();
+			 System.out.println("\t"+TestUtils.warning);
+		     System.out.println("\t DID NOT PASS !");
+			 System.out.println("\t"+TestUtils.starSeparator);
+		}
+		
+		System.out.println("\t Successfully deleting coupon ");
+		System.out.println("\t"+TestUtils.simpleSeparator);
+		System.out.println();
+		
+		companyService.deleteCoupon(companyId, existingCoupon.getId());
+		
+		//Extracting the results
+		
+		Coupon deletedCoupon=couponRepository.findById(existingCoupon.getId()).get();
+		
+		List<Purchase> purchaseHistory=purchaseRepository.findByCouponId(existingCoupon.getId());
+		
+		
+		//Checking the results
+		
+		try {
+			
+			assertFalse(deletedCoupon.getIsActive());
+			for(Purchase purchase:purchaseHistory)
+				assertFalse(purchase.isActive());
+			System.out.println("\t Passed successfully: coupon deleted(inactive) and no purchase history");
+			
+			System.out.println("\t"+TestUtils.starSeparator);
+			
+		} catch (Throwable t) {
+			 t.printStackTrace();
+			 System.out.println("\t"+TestUtils.warning);
+		     System.out.println("\t DID NOT PASS !");
+			 System.out.println("\t"+TestUtils.starSeparator);
+		}
+		
+		existingCoupon.setIsActive(true);
+		
+		for(Purchase purchase:purchaseHistory)
+			purchase.setActive(true);
+		
+		purchaseRepository.saveAll(purchaseHistory);
 		
 		
 	}

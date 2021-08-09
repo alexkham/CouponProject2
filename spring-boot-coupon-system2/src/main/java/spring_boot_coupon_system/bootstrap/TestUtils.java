@@ -15,14 +15,14 @@ import spring_boot_coupon_system.entities.Customer;
 public class TestUtils {
 
 
-	protected static String starSeparator=printManyTimes(50, "*");
-	protected static String warning=printManyTimes(50, "!");
-	protected static String simpleSeparator=printManyTimes(50,"-");
+	public static String starSeparator=printManyTimes(50, "*");
+	public static String warning=printManyTimes(50, "!");
+	public static String simpleSeparator=printManyTimes(50,"-");
 	protected static int couponCount;
 	protected static  int companiesCount;
 	protected static int customerCount;
 	protected static Date now=new Date(System.currentTimeMillis());
-	protected static Random random=new Random();
+	public static Random random=new Random();
 
 
 	public static Company createRandomCompanyNoCoupons() {

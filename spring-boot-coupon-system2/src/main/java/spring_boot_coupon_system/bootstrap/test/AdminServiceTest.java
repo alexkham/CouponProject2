@@ -1,4 +1,4 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -16,6 +16,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.InitCompanies;
+import spring_boot_coupon_system.bootstrap.InitCustomers;
+import spring_boot_coupon_system.bootstrap.TestUtils;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;

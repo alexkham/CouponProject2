@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.init.InitCoupons;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.repositories.PurchaseRepository;
@@ -15,7 +16,7 @@ import spring_boot_coupon_system.repositories.PurchaseRepository;
 @Order(5)
 public class InitPurchases implements CommandLineRunner {
 	
-    protected static int purchaseCapacity=10;
+    public static int purchaseCapacity=10;
 	
 	protected static List<Purchase> purchases=new ArrayList<>();
 	

@@ -11,7 +11,11 @@ import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 public class TestUtils {
 
 
@@ -21,7 +25,7 @@ public class TestUtils {
 	protected static int couponCount;
 	protected static  int companiesCount;
 	protected static int customerCount;
-	protected static Date now=new Date(System.currentTimeMillis());
+	public static Date now=new Date(System.currentTimeMillis());
 	public static Random random=new Random();
 
 

@@ -15,7 +15,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Entity
 @Table(name = "Coupons")
 @Data

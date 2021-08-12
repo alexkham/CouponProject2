@@ -1,6 +1,8 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
+
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +10,22 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.TestUtils;
+import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
 import spring_boot_coupon_system.entities.Customer;
 import spring_boot_coupon_system.repositories.CustomerRepository;
+
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Component
 @Order(1)
 public class InitCustomers implements CommandLineRunner{
 	
 	public static int  customersCapacity=10;
-	protected static List<Customer> customers=new ArrayList();
+	public static List<Customer> customers=new ArrayList();
 	
 	@Autowired
 	protected   CustomerRepository customerRepository;

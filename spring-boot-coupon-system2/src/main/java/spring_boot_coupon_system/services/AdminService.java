@@ -1,5 +1,6 @@
 package spring_boot_coupon_system.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -9,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+
 import spring_boot_coupon_system.exceptions.ErrorMessages;
 
 import spring_boot_coupon_system.entities.Company;
@@ -17,7 +19,11 @@ import spring_boot_coupon_system.entities.Customer;
 import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
 
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 
 @Service
 public class AdminService extends ClientService {
@@ -26,6 +32,15 @@ public class AdminService extends ClientService {
 	private static final String ADMIN_EMAIL = "admin@admin.com";
 	
 
+	
+	/**
+	 * 
+	 * Verifies users credentials (admin email and password)
+	 * @param email String 
+	 * @param password String
+	 * @return true-if exists row containing specified email and password,otherwise-false
+	 * @throws CouponSystemException
+	 */
 	public boolean login(String email, String password) throws CouponSystemException {
 		
 		if(!email.equalsIgnoreCase(ADMIN_EMAIL)&&!password.equals(ADMIN_PASSWORD))
@@ -36,6 +51,12 @@ public class AdminService extends ClientService {
 	
 	
 	
+	/**
+	 * Adds a company received as a parameter to respective table in the database after verifying  its properties
+	 * @param company Object of type Company
+	 * @return Long -the Id Number of newly  added company as it shows in the database
+	 * @throws CouponSystemException
+	 */
 	public Long addCompany(Company company) throws CouponSystemException {
 		
 		Company companyByName=companyRepository.findByName(company.getName());
@@ -51,6 +72,13 @@ public class AdminService extends ClientService {
 		
 	}
 	
+	
+	/**
+	 * Performs update of an existing record in the database by overwriting  respective values of it with 
+	 * the data received as a parameter
+	 * @param company Object of type Company
+	 * @throws CouponSystemException
+	 */
 	public void updateCompany(Company company) throws CouponSystemException {
 		
 		Long companyId=company.getCompanyId();
@@ -65,7 +93,11 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	
+	/**
+	 * Turns one company record with specified id to "inactive "
+	 * @param companyId Id number(int) of company to be deleted(deactivated)
+	 * @throws CouponSystemException
+	 */
 	@Transactional
 	public void deleteCompany(Long companyId) throws CouponSystemException {
 		
@@ -93,7 +125,10 @@ public class AdminService extends ClientService {
 	}
 	
 	
-	
+	/**
+	 * Returns the list of all companies in the database
+	 * @return List of objects of type Company
+	 */
 	public List<Company> getAllCompanies(){
 		
 		
@@ -102,6 +137,13 @@ public class AdminService extends ClientService {
 		
 	}
 	
+	
+	/**
+	 * Returns an object of type Company with an id value equal to the received as an argument
+	 * @param companyId Long value of id number 
+	 * @return An object of type Company
+	 * @throws CouponSystemException
+	 */
 	public Company getOneCompany(Long companyId) throws CouponSystemException {
 		//Checks the argument validity and creates new object in one piece of action
    		Company company= companyRepository
@@ -117,6 +159,13 @@ public class AdminService extends ClientService {
 				
 	}
 	
+	
+	/**
+	 * Adds a new customer to the database
+	 * @param customer Object of type Customer
+	 * @return Newly created object of type Customer
+	 * @throws CouponSystemException
+	 */
 	public Customer addCustomer(Customer customer) throws CouponSystemException {
 		
 		Customer customerByEmail=customerRepository.findByEmail(customer.getEmail());
@@ -130,6 +179,11 @@ public class AdminService extends ClientService {
 		
 	}
 	
+	/**
+	 * Updates values of the specified object  after verifying that such customer exists in the database
+	 * @param customer Object of type Customer
+	 * @throws CouponSystemException
+	 */
 	public void updateCustomer(Customer customer) throws CouponSystemException {
 		
 		
@@ -143,6 +197,11 @@ public class AdminService extends ClientService {
 		
 	}
 	
+	/**
+	 * Deletes (turns into inactive state) a record of customer with respective id number in the database
+	 * @param customerId Integer value representing id of the customer
+	 * @throws CouponSystemException
+	 */
 	@Transactional
 	public void deleteCustomer(Long customerId) throws CouponSystemException {
 		//Both validating and delivering data
@@ -166,13 +225,23 @@ public class AdminService extends ClientService {
 		
 	}
 	
-	
+	 /**
+     * Extracts and returns a list of all customers in the database
+     * @return List of customers
+     */
 	public List<Customer> getAllCustomers(){
 		
 		return customerRepository.findByIsActiveTrue();
 		
 	}
 	
+	/**
+	 * Retrieves from the database and returns as  an object a record with id number specified
+	 * 
+	 * @param Long type customerId
+	 * @return Object of type Customer specified by Id
+	 * @throws CouponSystemException
+	 */
 	public Customer getOneCustomer(Long customerId) throws CouponSystemException {
 		
 		//Both validating and delivering data

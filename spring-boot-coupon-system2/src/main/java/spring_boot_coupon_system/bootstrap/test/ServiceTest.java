@@ -10,7 +10,11 @@ import spring_boot_coupon_system.repositories.PurchaseRepository;
 import spring_boot_coupon_system.services.AdminService;
 import spring_boot_coupon_system.services.CompanyService;
 import spring_boot_coupon_system.services.CustomerService;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 public abstract class ServiceTest {
 	
 	@Autowired

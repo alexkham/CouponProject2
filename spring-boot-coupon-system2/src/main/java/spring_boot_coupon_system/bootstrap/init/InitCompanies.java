@@ -1,6 +1,12 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
+
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +15,8 @@ import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import spring_boot_coupon_system.bootstrap.TestUtils;
+import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
 import spring_boot_coupon_system.entities.Company;
 import spring_boot_coupon_system.repositories.CompanyRepository;
 @Component
@@ -27,7 +35,6 @@ public class InitCompanies implements CommandLineRunner{
 		
 		System.out.println(TestUtilsGraphics.COMPANIES);
 		
-		//List<Company> companies= new ArrayList<>();
 		
 		for(int i=0;i<companiesCapacity;i++) 
 			
@@ -49,7 +56,6 @@ public class InitCompanies implements CommandLineRunner{
 		
 		companyRepository.findAll().forEach(System.out::println);
 		
-		//companies.get(0).getCompanyCoupons().add(TestUtils.createRandomCoupon(companies.get(0)));
         		
 	}
 

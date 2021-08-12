@@ -2,6 +2,7 @@ package spring_boot_coupon_system.entities;
 
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +25,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
 import lombok.ToString;
+
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 
 @Entity
 @Table(name="Companies")

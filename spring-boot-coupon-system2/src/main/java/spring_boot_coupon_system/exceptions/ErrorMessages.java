@@ -2,6 +2,11 @@ package spring_boot_coupon_system.exceptions;
 
 import lombok.Data;
 
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 
 public enum ErrorMessages {
 	

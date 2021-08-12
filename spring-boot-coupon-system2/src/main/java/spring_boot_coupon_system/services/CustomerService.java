@@ -1,6 +1,7 @@
 package spring_boot_coupon_system.services;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +20,24 @@ import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
 import spring_boot_coupon_system.exceptions.ErrorMessages;
 import spring_boot_coupon_system.repositories.PurchaseRepository;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Service
 public class CustomerService extends ClientService implements ClientLoginService{
 
-	/*public void addNewCustomer(Customer customer) {
-		customerRepository.save(customer);
-	}*/
+	
+	
+	/**
+	 * Checks if customer with specified email and password exists in the database
+	 * @param clientId Long Id number of user( customer) attempting to perform action
+	 * @param email String value -customer email
+	 * @param password String value-customer password
+	 * @return boolean value True-if the credentials pass,otherwise-false
+	 * @throws CouponSystemException
+	 */
 	@Override
 	public boolean login(Long clientId, String email, String password) throws CouponSystemException {
 
@@ -41,7 +53,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 	}
 
 
-
+	/**
+	 * After validating all conditions needed to successful purchase(the coupon provided as an an argument is not expired,
+	 * the coupon is not out of stock,this coupon was not sold to the current customer), creates a new purchase record and updates 
+	 * the respective table  
+	 * @param clientId Long Id number of user( customer) attempting to perform action
+	 * @param coupon A coupon to be purchased by the current customer
+	 * @throws CouponSystemException
+	 */
     @Transactional
 	public  Long  purchaseCoupon(Long clientId,Coupon coupon) throws CouponSystemException {
 
@@ -78,7 +97,12 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 	}
 
-
+    /**
+	 * Creates and returns a list of coupons purchased by current(logged in ) customer
+	 * @param clientId Long Id number of user(customer) attempting to perform action
+	 * @return List of coupons
+	 * @throws DataBaseProcedureException
+	 */
 	public List<Coupon> getCustomerCoupons(Long clientId) throws CouponSystemException{
 
 		 validateCustomer(clientId);
@@ -94,7 +118,15 @@ public class CustomerService extends ClientService implements ClientLoginService
 		return couponsByCustomerId;
 
 	}
-
+    
+	/**
+	 * Creates and returns a list of coupons  purchased by current customer and belonging to a category
+	 * received as a parameter
+	 * @param clientId Long Id number of user(customer) attempting to perform action
+	 * @param category 
+	 * @return List of coupons 
+	 * @throws CouponSystemException
+	 */	
 	public List<Coupon> getCustomerCouponsByCategory(Long clientId ,Category category) throws CouponSystemException{
 
 		 validateCustomer(clientId);
@@ -117,6 +149,14 @@ public class CustomerService extends ClientService implements ClientLoginService
 
 
 	
+	/**
+	 * 
+	 * Gets all coupons with unit price less or even to certain value
+	 * @param clientId Long Id number of user(customer) attempting to perform action
+	 * @param maxPrice Maximal  value up to which we are filtering by unit price   
+	 * @return List of coupons which meet the criteria
+	 * @throws CouponSystemException 
+	 */
 
 	public List<Coupon> getCustomerCouponsByMaxPrice(Long clientId, double maxPrice) throws CouponSystemException{
 
@@ -133,7 +173,13 @@ public class CustomerService extends ClientService implements ClientLoginService
 		return couponsByMaxPrice;
 
 	}
-
+    
+	/**
+	 * Gets Object of type Customer which  represents currently logged in customer
+	 * @param clientId Long Id number of user(customer) attempting to perform action
+	 * @return Returns  An object of type Customer who's Id has been passed as an argument
+	 * @throws CouponSystemException
+	 */
 	public Customer getCustomerDetails(Long clientId) throws CouponSystemException {
 		
 		Customer customer= customerRepository
@@ -147,7 +193,11 @@ public class CustomerService extends ClientService implements ClientLoginService
 		
 	}
 	
-	
+	/**
+	 * Performing the check if current customer appears in the database and is active
+	 * @param clientId Long Id number of user(customer) attempting to perform action 
+	 * @throws CouponSystemException
+	 */
 	public void validateCustomer(Long clientId) throws CouponSystemException {
 		
 		if(!customerRepository.existsById(clientId))

@@ -2,6 +2,8 @@ package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
 
+
+
 import java.util.List;
 import java.util.Random;
 
@@ -10,19 +12,24 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import spring_boot_coupon_system.bootstrap.InitCompanies;
 import spring_boot_coupon_system.bootstrap.TestUtils;
 import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
 import spring_boot_coupon_system.bootstrap.init.InitCategories;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.repositories.CouponRepository;
+
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Component
 @Order(4)
 public class InitCoupons implements CommandLineRunner {
 	
 	public static int couponCapacity=10;
 	
-	public static  List<Coupon>coupons=new ArrayList<>();
+	public static  List<Coupon> coupons=new ArrayList<>();
 	
 	@Autowired
 	protected  CouponRepository couponRepository;

@@ -1,6 +1,7 @@
-package spring_boot_coupon_system.bootstrap;
+package spring_boot_coupon_system.bootstrap.init;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+
+import spring_boot_coupon_system.bootstrap.TestUtils;
+import spring_boot_coupon_system.bootstrap.TestUtilsGraphics;
 import spring_boot_coupon_system.bootstrap.init.InitCoupons;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.repositories.PurchaseRepository;
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Component
 @Order(5)
 public class InitPurchases implements CommandLineRunner {

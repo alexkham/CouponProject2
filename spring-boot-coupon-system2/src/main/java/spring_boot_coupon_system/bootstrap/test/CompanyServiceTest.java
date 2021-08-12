@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -17,7 +18,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import spring_boot_coupon_system.bootstrap.init.InitCategories;
-import spring_boot_coupon_system.bootstrap.InitCompanies;
+import spring_boot_coupon_system.bootstrap.init.InitCompanies;
 import spring_boot_coupon_system.bootstrap.init.InitCoupons;
 import spring_boot_coupon_system.bootstrap.TestUtils;
 import spring_boot_coupon_system.entities.Category;
@@ -26,7 +27,11 @@ import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Customer;
 import spring_boot_coupon_system.entities.Purchase;
 import spring_boot_coupon_system.exceptions.CouponSystemException;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Component
 @Order(7)
 public class CompanyServiceTest extends ServiceTest implements CommandLineRunner {
@@ -65,6 +70,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		 System.out.println("\t Testing validateCompany method with wrong (non-existing) Id");
 		 System.out.println("\t"+TestUtils.simpleSeparator);
 		 System.out.println();
+		 //Define an id number which does not exist for sure in the database
 		 Long nonExistingId= TestUtils.random.nextInt(InitCompanies.companiesCapacity)+10000l;;
 		 
 		 try {
@@ -86,10 +92,12 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		 System.out.println("\t Testing validateCompany method for inactive company");
 		 System.out.println("\t"+TestUtils.simpleSeparator);
 		 System.out.println();
-		 
+		 //Picking up random company from the existing
 		 Company existingCompany=companyService
 				 .getCompanyDetails(TestUtils.random.nextInt(InitCompanies.companiesCapacity)+1l);
+		 //Turning the company to inactive
 		 existingCompany.setIsActive(false);
+		 //Getting its id
 		 Long inactiveCompanyId= companyRepository.save(existingCompany).getCompanyId();
 		 
 		
@@ -106,7 +114,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			     System.out.println("\t DID NOT PASS !");
 				 System.out.println("\t"+TestUtils.starSeparator);
 			}
-		
+		//Cleaning up the slate at the end of the test
 		 existingCompany.setIsActive(true);
 		 companyRepository.save(existingCompany);
 		
@@ -124,7 +132,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
         System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
-		
+		//Creating new company which is still not in the database
 		Company company=TestUtils.createRandomCompanyNoCoupons();
 		company.setCompanyId(TestUtils.random.nextLong()+10l);
 		
@@ -143,7 +151,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		
 		System.out.println("\t Testing Login method with right credentials");
-		
+		//Saving new company to the database and getting generated id
 		company.setCompanyId(null);
 		Long companyId =companyRepository.save(company).getCompanyId();
 		
@@ -169,6 +177,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println();
 		
 		System.out.println("\t Trying to get company details with non existing company Id number");
+		//Generating id number which does not exist in the database at the moment for sure
 		Long nonExistId=10000l;
 		
 		  try {
@@ -189,13 +198,13 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		  System.out.println("\t Trying to get company details with existing Id number");
 		  System.out.println("\t"+TestUtils.simpleSeparator);
 		  
-		  
+		  //Getting random company from the list of existing
 		  Company existingCompany=companyRepository
 				  .findAll()
 				  .get(TestUtils.random.nextInt(InitCompanies.companiesCapacity));
-		  
+		  //Extract the actual id number
 		  Long existId=existingCompany.getCompanyId();
-		  
+		  //Invoking tested method with the id of the erxisting company
 		  Company actualCompany=companyService.getCompanyDetails(existId);
 		
 		   try {
@@ -214,7 +223,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		}
 		   
         System.out.println("\t Trying to get company details of an inactive company ");
-		   
+		   //Turning existing company to an inactive and saving it back
 		   actualCompany.setIsActive(false);
 		   companyRepository.save(actualCompany);
 		   
@@ -232,7 +241,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 				 System.out.println("\t"+TestUtils.starSeparator);
 			     
 			}
-		   
+		   //Cleaning up after the test is done
 		   actualCompany.setIsActive(true);
 		   companyRepository.save(actualCompany);
 		
@@ -244,9 +253,9 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		 System.out.println("\t Testing isCompanyExist() method");
 		 System.out.println("\t"+TestUtils.simpleSeparator);
 		 System.out.println();
-		 
+		//Creating random company 
 		Company company=TestUtils.createRandomCompanyNoCoupons();
-		
+		//Setting company is to non-existing number(out of the range)
 		company.setCompanyId(TestUtils.random.nextLong()+InitCompanies.companiesCapacity);
 		
 		 System.out.println("\t Running test with non-existing(unsaved) company");
@@ -265,7 +274,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		     System.out.println("\t DID NOT PASS !");
 			 System.out.println("\t"+TestUtils.starSeparator);
 		}
-		
+		//Saving the random company created
 		company.setCompanyId(null);
 		companyRepository.save(company);
 		Long companyId=company.getCompanyId();
@@ -303,13 +312,24 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
         System.out.println("\t"+TestUtils.simpleSeparator);
         System.out.println();
 		
-		long clientId = TestUtils.random.nextInt(InitCompanies.companiesCapacity/2)+1l;
+        //Generating random id from the existing range
+		Long clientId = TestUtils.random.nextInt(InitCompanies.companiesCapacity/2)+1l;
+		//Getting coupons of an existing company
 		List<Coupon> companyCoupons=companyService.getCompanyCoupons(clientId);
-		int amountOfCoupons=companyCoupons.size();
+		int actualAmountOfCoupons=companyCoupons.size();
+		
+		//Filtering company coupons from overall and comparing the result
+		int expectedAmountOfCoupons=couponRepository
+				.findAll()
+				.stream()
+				.filter(c->c.getCompany().getCompanyId()==clientId)
+				.filter(c->c.getIsActive())
+				.collect(Collectors.toList())
+				.size();
 		
 		 try {
 			   
-			   assertEquals(amountOfCoupons, InitCoupons.couponCapacity);
+			   assertEquals( expectedAmountOfCoupons,actualAmountOfCoupons);
 			   System.out.println("\t Coupons list of proper size  created : Success");
 			   
 			   System.out.println("\t"+TestUtils.simpleSeparator);
@@ -319,7 +339,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			
 			e.printStackTrace();
 		}
-		
+		//Checking that all coupons are active
 		for(Coupon coupon:companyCoupons) {
 			if(!coupon.getIsActive())
 				System.out.println("\t One or more of company coupons are inactive.Test failed");
@@ -327,6 +347,8 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		}
 		
 		System.out.println("\t Test success: all company coupons are active");
+		
+		//Turning half of the coupons to an inactive
 		
 		for(int i=0;i<companyCoupons.size();i++)
 		
@@ -342,7 +364,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		 try {
 			   
-			   assertEquals( InitCoupons.couponCapacity/2,amountOfCoupons2);
+			   assertEquals( expectedAmountOfCoupons/2,amountOfCoupons2);
 			   System.out.println("\t"+TestUtils.simpleSeparator);
 			   System.out.println("\t Inactive coupons were filtered : Success");
 			   System.out.println("\t"+TestUtils.simpleSeparator);
@@ -353,6 +375,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			e.printStackTrace();
 		}
 		 
+		 //Cleaning up after the test is done
 		 for(int i=0;i<companyCoupons.size();i++)
 				
 		      if(i%2==0) {
@@ -371,10 +394,11 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
-		
+		//Picking one random existing category
 		Category category=categoryRepository.findById
 				(TestUtils.random.nextInt(InitCategories.categoriesCapacity/2)+1l).get();
 		
+		//Invoking the tested method
 		List<Coupon> companyCouponsByCategory=companyService
 				.getCompanyCouponsByCategory
 				(TestUtils.random.nextInt(InitCompanies.companiesCapacity/2)+1l, category);
@@ -393,6 +417,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			 System.out.println("\t"+TestUtils.starSeparator);
 		}
 		
+		//Checking all coupons belong to the expected category
 		for(Coupon coupon: companyCouponsByCategory) {
 			
 			if(coupon.getCategory().getId()!=category.getId()) {
@@ -487,7 +512,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		
 		Coupon couponToAdd2=companyService
 				.getCompanyCoupons(clientId)
-				.get(TestUtils.random.nextInt(InitCoupons.couponCapacity));
+				.get(TestUtils.random.nextInt(InitCoupons.couponCapacity/2));
 		
 		try {
 			assertThrows(CouponSystemException.class,()->companyService.addCoupon(clientId, couponToAdd2));
@@ -585,7 +610,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
-		Long clientId=5l;//TestUtils.random.nextInt(InitCompanies.companiesCapacity/2)+2l;
+		Long clientId=TestUtils.random.nextInt(InitCompanies.companiesCapacity/2)+2l;
 		Long otherCompanyId=clientId-1l;
 		Coupon couponToUpdate=TestUtils
 				.createRandomCoupon
@@ -671,6 +696,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
+		//Creating new coupon(still unsaved to the database)
 		Company company=companyRepository
 				.findAll()
 				.get(TestUtils.random.nextInt(InitCompanies.companiesCapacity/2));
@@ -699,6 +725,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
+		//Picking up an existing coupon and turning it into inactive
 		Coupon existingCoupon=couponRepository
 				.findAll()
 				.get(TestUtils.random.nextInt(InitCoupons.couponCapacity));
@@ -721,6 +748,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			 System.out.println("\t"+TestUtils.starSeparator);
 		}
 		
+		//Cleaning up after the test is done
 		existingCoupon.setIsActive(true);
 		couponRepository.save(existingCoupon);
 		
@@ -728,7 +756,7 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 		System.out.println("\t"+TestUtils.simpleSeparator);
 		System.out.println();
 		
-		
+		//Giving wrong credentials at the company id argument position
 		
 		try {
 			assertThrows(CouponSystemException.class,
@@ -777,6 +805,8 @@ public class CompanyServiceTest extends ServiceTest implements CommandLineRunner
 			 System.out.println("\t"+TestUtils.starSeparator);
 		}
 		
+		
+		//Cleaning up after the test is done
 		existingCoupon.setIsActive(true);
 		
 		for(Purchase purchase:purchaseHistory)

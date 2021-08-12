@@ -10,7 +10,11 @@ import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.entities.Purchase;
 
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, Long> {

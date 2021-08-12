@@ -14,7 +14,11 @@ import spring_boot_coupon_system.entities.Category;
 import spring_boot_coupon_system.entities.Coupon;
 import spring_boot_coupon_system.repositories.CategoryRepository;
 import spring_boot_coupon_system.repositories.CouponRepository;
-
+/**
+ * @author  Alex Khalamsky id 307767483
+ * @version August 2021
+ * 
+ */
 @Component
 @Order(3)
 public class InitCategories implements CommandLineRunner {
